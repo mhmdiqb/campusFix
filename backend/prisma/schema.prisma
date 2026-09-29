@@ -22,7 +22,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  reports Report[]
+  reports     Report[]
+  assignments Assignment[]
 }
 
 model FacilityCategory {
@@ -79,9 +80,10 @@ model Report {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user     User          @relation(fields: [userId], references: [id])
-  facility Facility      @relation(fields: [facilityId], references: [id])
-  images   ReportImage[]
+  user       User          @relation(fields: [userId], references: [id])
+  facility   Facility      @relation(fields: [facilityId], references: [id])
+  images     ReportImage[]
+  assignment Assignment?
 }
 
 model ReportImage {
@@ -91,4 +93,15 @@ model ReportImage {
   createdAt DateTime @default(now())
 
   report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model Assignment {
+  id           Int       @id @default(autoincrement())
+  reportId     Int       @unique
+  technicianId Int
+  assignedAt   DateTime  @default(now())
+  completedAt  DateTime?
+
+  report     Report @relation(fields: [reportId], references: [id])
+  technician User   @relation(fields: [technicianId], references: [id])
 }
