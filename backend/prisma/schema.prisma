@@ -28,4 +28,20 @@ model FacilityCategory {
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  facilities Facility[]
+}
+
+model Facility {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  location    String
+  qrCode      String   @unique
+  status      String   @default("GOOD")
+  categoryId  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category FacilityCategory @relation(fields: [categoryId], references: [id])
 }
