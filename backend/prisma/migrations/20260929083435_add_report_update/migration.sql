@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE `ReportUpdate` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `reportId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `type` ENUM('STATUS_CHANGE', 'NOTE') NOT NULL,
+    `status` ENUM('REPORTED', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CONFIRMED', 'REJECTED') NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `ReportUpdate` ADD CONSTRAINT `ReportUpdate_reportId_fkey` FOREIGN KEY (`reportId`) REFERENCES `Report`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ReportUpdate` ADD CONSTRAINT `ReportUpdate_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
