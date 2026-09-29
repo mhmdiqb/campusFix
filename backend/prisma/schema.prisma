@@ -21,6 +21,8 @@ model User {
   role      UserRole @default(STUDENT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  reports Report[]
 }
 
 model FacilityCategory {
@@ -44,4 +46,39 @@ model Facility {
   updatedAt   DateTime @updatedAt
 
   category FacilityCategory @relation(fields: [categoryId], references: [id])
+  reports  Report[]
+}
+
+enum ReportStatus {
+  REPORTED
+  VERIFIED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CONFIRMED
+  REJECTED
+}
+
+enum ReportPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Report {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  priority    ReportPriority @default(MEDIUM)
+  status      ReportStatus   @default(REPORTED)
+
+  userId     Int
+  facilityId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id])
+  facility Facility @relation(fields: [facilityId], references: [id])
 }
