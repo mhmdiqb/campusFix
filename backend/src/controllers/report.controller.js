@@ -181,19 +181,35 @@ const updateReportStatus = async (req, res) => {
       });
     }
 
-    const updatedReport = await prisma.report.update({
-      where: {
-        id
-      },
-      data: {
-        status
-      }
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedReport = await tx.report.update({
+        where: {
+          id
+        },
+        data: {
+          status
+        }
+      });
+
+      const reportUpdate = await tx.reportUpdate.create({
+        data: {
+          reportId: id,
+          userId: req.user.userId,
+          type: "STATUS_CHANGE",
+          status
+        }
+      });
+
+      return {
+        updatedReport,
+        reportUpdate
+      };
     });
 
     return res.status(200).json({
       success: true,
       message: "Report status updated successfully",
-      data: updatedReport
+      data: result.updatedReport
     });
   } catch (error) {
     console.error("Update report status error:", error);
