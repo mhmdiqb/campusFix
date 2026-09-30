@@ -45,6 +45,63 @@ async function createCategory(req, res) {
   }
 }
 
+const getCategories = async (req, res) => {
+  try {
+    const categories = await prisma.facilityCategory.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Facility categories retrieved successfully",
+      data: categories,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const getCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await prisma.facilityCategory.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Facility category not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Facility category retrieved successfully",
+      data: category,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createCategory,
+  getCategories,
+  getCategoryById
 };

@@ -2,6 +2,8 @@ const express = require("express");
 
 const {
   createCategory,
+  getCategories,
+  getCategoryById
 } = require("../controllers/facility-category.controller");
 
 const { authenticate } = require("../middlewares/auth.middleware");
@@ -15,5 +17,8 @@ router.post(
   requireRole("ADMIN"),
   createCategory
 );
+
+router.get("/", getCategories);
+router.get("/:id", getCategoryById);
 
 module.exports = router;
