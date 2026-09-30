@@ -221,9 +221,138 @@ const updateReportStatus = async (req, res) => {
   }
 };
 
+const confirmReport = async (req, res) => {
+  try {
+    const reportId = Number(req.params.id);
+    const userId = req.user.userId;
+
+    const report = await prisma.report.findUnique({
+      where: {
+        id: reportId
+      }
+    });
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found"
+      });
+    }
+
+    // Hanya pembuat laporan yang boleh melakukan konfirmasi
+    if (report.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to confirm this report"
+      });
+    }
+
+    // Report harus sudah selesai
+    if (report.status !== "COMPLETED") {
+      return res.status(400).json({
+        success: false,
+        message: "Report must be COMPLETED first"
+      });
+    }
+
+    const updatedReport = await prisma.report.update({
+      where: {
+        id: reportId
+      },
+      data: {
+        status: "CONFIRMED"
+      }
+    });
+
+    await prisma.reportUpdate.create({
+      data: {
+        reportId,
+        userId,
+        type: "STATUS_CHANGE",
+        status: "CONFIRMED"
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Report confirmed successfully",
+      data: updatedReport
+    });
+  } catch (error) {
+    console.error("Confirm report error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+const getReportHistory = async (req, res) => {
+  try {
+    const reportId = Number(req.params.id);
+    const userId = req.user.userId;
+
+    const report = await prisma.report.findUnique({
+      where: {
+        id: reportId
+      }
+    });
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found"
+      });
+    }
+
+    // User hanya boleh melihat history laporan miliknya
+    // Admin juga boleh melihat semua laporan
+    if (req.user.role !== "ADMIN" && report.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to view this report history"
+      });
+    }
+
+    const history = await prisma.reportUpdate.findMany({
+      where: {
+        reportId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            role: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "asc"
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Report history retrieved successfully",
+      data: history
+    });
+  } catch (error) {
+    console.error("Get report history error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
 module.exports = {
   createReport,
   getReports,
   getReportById,
-  updateReportStatus
+  updateReportStatus,
+  confirmReport,
+  getReportHistory
 };

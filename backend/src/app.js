@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth.routes");
 const facilityRoutes = require("./routes/facility.routes");
 const facilityCategoryRoutes = require("./routes/facility-category.routes");
 const reportRoutes = require("./routes/report.routes");
+const assignmentRoutes = require("./routes/assignment.routes");
 
 require("dotenv").config();
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/assignments", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
