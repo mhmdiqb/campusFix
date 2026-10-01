@@ -3,25 +3,12 @@ const { createAuditLog } = require("../utils/audit-log");
 
 const createReport = async (req, res) => {
   try {
-    const { title, description, priority, facilityId } = req.body;
+    const { title, description, priority, location } = req.body;
 
-    if (!title || !description || !facilityId) {
+    if (!title || !description || !location) {
       return res.status(400).json({
         success: false,
-        message: "Title, description, and facilityId are required",
-      });
-    }
-
-    const facility = await prisma.facility.findUnique({
-      where: {
-        id: Number(facilityId),
-      },
-    });
-
-    if (!facility) {
-      return res.status(404).json({
-        success: false,
-        message: "Facility not found",
+        message: "Title, description, and location are required",
       });
     }
 
@@ -30,11 +17,7 @@ const createReport = async (req, res) => {
         title,
         description,
         priority: priority || "MEDIUM",
-        facilityId: Number(facilityId),
         userId: req.user.userId,
-      },
-      include: {
-        facility: true,
       },
     });
 

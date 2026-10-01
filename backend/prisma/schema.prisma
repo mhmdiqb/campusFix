@@ -70,23 +70,24 @@ enum ReportPriority {
 }
 
 model Report {
-  id          Int            @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   description String
   priority    ReportPriority @default(MEDIUM)
   status      ReportStatus   @default(REPORTED)
 
-  userId     Int
-  facilityId Int
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  facilityId  Int?
+  facility    Facility?    @relation(fields: [facilityId], references: [id])
 
-  user       User           @relation(fields: [userId], references: [id])
-  facility   Facility       @relation(fields: [facilityId], references: [id])
-  images     ReportImage[]
-  assignment Assignment?
-  updates    ReportUpdate[]
+  images      ReportImage[]
+  assignment  Assignment?
+  updates     ReportUpdate[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model ReportImage {

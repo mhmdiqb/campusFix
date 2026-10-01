@@ -8,53 +8,53 @@ const assignReport = async (req, res) => {
     if (!technicianId) {
       return res.status(400).json({
         success: false,
-        message: "technicianId is required"
+        message: "technicianId is required",
       });
     }
 
     const report = await prisma.report.findUnique({
       where: {
-        id: reportId
-      }
+        id: reportId,
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
-        message: "Report not found"
+        message: "Report not found",
       });
     }
 
     const technician = await prisma.user.findUnique({
       where: {
-        id: Number(technicianId)
-      }
+        id: Number(technicianId),
+      },
     });
 
     if (!technician) {
       return res.status(404).json({
         success: false,
-        message: "Technician not found"
+        message: "Technician not found",
       });
     }
 
     if (technician.role !== "TECHNICIAN") {
-        return res.status(400).json({
-            success: false,
-            message: "User is not a technician"
-        })
+      return res.status(400).json({
+        success: false,
+        message: "User is not a technician",
+      });
     }
 
     const existingAssignment = await prisma.assignment.findUnique({
       where: {
-        reportId
-      }
+        reportId,
+      },
     });
 
     if (existingAssignment) {
       return res.status(409).json({
         success: false,
-        message: "Report is already assigned"
+        message: "Report is already assigned",
       });
     }
 
@@ -62,26 +62,26 @@ const assignReport = async (req, res) => {
       const assignment = await tx.assignment.create({
         data: {
           reportId,
-          technicianId: Number(technicianId)
+          technicianId: Number(technicianId),
         },
         include: {
           technician: {
             select: {
               id: true,
               name: true,
-              email: true
-            }
-          }
-        }
+              email: true,
+            },
+          },
+        },
       });
 
       const updatedReport = await tx.report.update({
         where: {
-          id: reportId
+          id: reportId,
         },
         data: {
-          status: "ASSIGNED"
-        }
+          status: "ASSIGNED",
+        },
       });
 
       await tx.reportUpdate.create({
@@ -89,27 +89,38 @@ const assignReport = async (req, res) => {
           reportId,
           userId: req.user.userId,
           type: "STATUS_CHANGE",
-          status: "ASSIGNED"
-        }
+          status: "ASSIGNED",
+        },
+      });
+
+      // Audit Log
+      await tx.auditLog.create({
+        data: {
+          userId: req.user.userId,
+          action: "CREATE",
+          entity: "Assignment",
+          entityId: assignment.id,
+          details: `Assigned report ${reportId} to technician ${technicianId}`,
+        },
       });
 
       return {
         assignment,
-        report: updatedReport
+        report: updatedReport,
       };
     });
 
     return res.status(201).json({
       success: true,
       message: "Report assigned successfully",
-      data: result
+      data: result,
     });
   } catch (error) {
     console.error("Assign report error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
