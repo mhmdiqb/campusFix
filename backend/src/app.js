@@ -6,6 +6,8 @@ const facilityRoutes = require("./routes/facility.routes");
 const facilityCategoryRoutes = require("./routes/facility-category.routes");
 const reportRoutes = require("./routes/report.routes");
 const assignmentRoutes = require("./routes/assignment.routes");
+const reportImageRoutes = require("./routes/report-image.routes");
+const auditLogRoutes = require("./routes/audit-log.routes");
 
 require("dotenv").config();
 
@@ -14,6 +16,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/reports", reportImageRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/health", healthRoutes);

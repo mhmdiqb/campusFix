@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { createReport, getReports, getReportById, updateReportStatus, confirmReport, getReportHistory } = require("../controllers/report.controller");
+const { createReport, getReports, getReportById, updateReportStatus, confirmReport, getReportHistory, addReportNote } = require("../controllers/report.controller");
 
 const { authenticate } = require("../middlewares/auth.middleware");
 
@@ -16,6 +16,11 @@ router.post(
 
 router.get("/", authenticate, getReports);
 router.get("/:id/history", authenticate, getReportHistory);
+router.post(
+  "/:id/notes",
+  authenticate,
+  addReportNote
+);
 router.get("/:id", authenticate, getReportById);
 
 

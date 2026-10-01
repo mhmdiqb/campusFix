@@ -1,4 +1,5 @@
 const prisma = require("../utils/prisma");
+const { createAuditLog } = require("../utils/audit-log");
 
 const createReport = async (req, res) => {
   try {
@@ -7,20 +8,20 @@ const createReport = async (req, res) => {
     if (!title || !description || !facilityId) {
       return res.status(400).json({
         success: false,
-        message: "Title, description, and facilityId are required"
+        message: "Title, description, and facilityId are required",
       });
     }
 
     const facility = await prisma.facility.findUnique({
       where: {
-        id: Number(facilityId)
-      }
+        id: Number(facilityId),
+      },
     });
 
     if (!facility) {
       return res.status(404).json({
         success: false,
-        message: "Facility not found"
+        message: "Facility not found",
       });
     }
 
@@ -30,24 +31,33 @@ const createReport = async (req, res) => {
         description,
         priority: priority || "MEDIUM",
         facilityId: Number(facilityId),
-        userId: req.user.userId
+        userId: req.user.userId,
       },
       include: {
-        facility: true
-      }
+        facility: true,
+      },
+    });
+
+    // Audit Log otomatis
+    await createAuditLog({
+      userId: req.user.userId,
+      action: "CREATE",
+      entity: "Report",
+      entityId: report.id,
+      details: `Created report ${report.title}`,
     });
 
     return res.status(201).json({
       success: true,
       message: "Report created successfully",
-      data: report
+      data: report,
     });
   } catch (error) {
     console.error("Create report error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -56,37 +66,37 @@ const getReports = async (req, res) => {
   try {
     const reports = await prisma.report.findMany({
       orderBy: {
-        createdAt: "desc"
+        createdAt: "desc",
       },
       include: {
         facility: {
           select: {
             id: true,
             name: true,
-            location: true
-          }
+            location: true,
+          },
         },
         user: {
           select: {
             id: true,
             name: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     });
 
     res.status(200).json({
       success: true,
       message: "Reports retrieved successfully",
-      data: reports
+      data: reports,
     });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -97,51 +107,51 @@ const getReportById = async (req, res) => {
 
     const report = await prisma.report.findUnique({
       where: {
-        id
+        id,
       },
       include: {
         facility: {
           select: {
             id: true,
             name: true,
-            location: true
-          }
+            location: true,
+          },
         },
         user: {
           select: {
             id: true,
             name: true,
-            email: true
-          }
+            email: true,
+          },
         },
         images: true,
         assignment: true,
         updates: {
           orderBy: {
-            createdAt: "desc"
-          }
-        }
-      }
+            createdAt: "desc",
+          },
+        },
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
-        message: "Report not found"
+        message: "Report not found",
       });
     }
 
     res.status(200).json({
       success: true,
       message: "Report retrieved successfully",
-      data: report
+      data: report,
     });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -158,37 +168,37 @@ const updateReportStatus = async (req, res) => {
       "IN_PROGRESS",
       "COMPLETED",
       "CONFIRMED",
-      "REJECTED"
+      "REJECTED",
     ];
 
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid report status"
+        message: "Invalid report status",
       });
     }
 
     const report = await prisma.report.findUnique({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
-        message: "Report not found"
+        message: "Report not found",
       });
     }
 
     const result = await prisma.$transaction(async (tx) => {
       const updatedReport = await tx.report.update({
         where: {
-          id
+          id,
         },
         data: {
-          status
-        }
+          status,
+        },
       });
 
       const reportUpdate = await tx.reportUpdate.create({
@@ -196,27 +206,38 @@ const updateReportStatus = async (req, res) => {
           reportId: id,
           userId: req.user.userId,
           type: "STATUS_CHANGE",
-          status
-        }
+          status,
+        },
+      });
+
+      // Create audit log
+      await tx.auditLog.create({
+        data: {
+          userId: req.user.userId,
+          action: "UPDATE",
+          entity: "Report",
+          entityId: id,
+          details: `Report status changed from ${report.status} to ${status}`,
+        },
       });
 
       return {
         updatedReport,
-        reportUpdate
+        reportUpdate,
       };
     });
 
     return res.status(200).json({
       success: true,
       message: "Report status updated successfully",
-      data: result.updatedReport
+      data: result.updatedReport,
     });
   } catch (error) {
     console.error("Update report status error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -228,14 +249,14 @@ const confirmReport = async (req, res) => {
 
     const report = await prisma.report.findUnique({
       where: {
-        id: reportId
-      }
+        id: reportId,
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
-        message: "Report not found"
+        message: "Report not found",
       });
     }
 
@@ -243,7 +264,7 @@ const confirmReport = async (req, res) => {
     if (report.userId !== userId) {
       return res.status(403).json({
         success: false,
-        message: "You are not allowed to confirm this report"
+        message: "You are not allowed to confirm this report",
       });
     }
 
@@ -251,17 +272,17 @@ const confirmReport = async (req, res) => {
     if (report.status !== "COMPLETED") {
       return res.status(400).json({
         success: false,
-        message: "Report must be COMPLETED first"
+        message: "Report must be COMPLETED first",
       });
     }
 
     const updatedReport = await prisma.report.update({
       where: {
-        id: reportId
+        id: reportId,
       },
       data: {
-        status: "CONFIRMED"
-      }
+        status: "CONFIRMED",
+      },
     });
 
     await prisma.reportUpdate.create({
@@ -269,21 +290,21 @@ const confirmReport = async (req, res) => {
         reportId,
         userId,
         type: "STATUS_CHANGE",
-        status: "CONFIRMED"
-      }
+        status: "CONFIRMED",
+      },
     });
 
     return res.status(200).json({
       success: true,
       message: "Report confirmed successfully",
-      data: updatedReport
+      data: updatedReport,
     });
   } catch (error) {
     console.error("Confirm report error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
 };
@@ -295,14 +316,14 @@ const getReportHistory = async (req, res) => {
 
     const report = await prisma.report.findUnique({
       where: {
-        id: reportId
-      }
+        id: reportId,
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
-        message: "Report not found"
+        message: "Report not found",
       });
     }
 
@@ -311,39 +332,98 @@ const getReportHistory = async (req, res) => {
     if (req.user.role !== "ADMIN" && report.userId !== userId) {
       return res.status(403).json({
         success: false,
-        message: "You are not allowed to view this report history"
+        message: "You are not allowed to view this report history",
       });
     }
 
     const history = await prisma.reportUpdate.findMany({
       where: {
-        reportId
+        reportId,
       },
       include: {
         user: {
           select: {
             id: true,
             name: true,
-            role: true
-          }
-        }
+            role: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: "asc"
-      }
+        createdAt: "asc",
+      },
     });
 
     return res.status(200).json({
       success: true,
       message: "Report history retrieved successfully",
-      data: history
+      data: history,
     });
   } catch (error) {
     console.error("Get report history error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Internal server error",
+    });
+  }
+};
+
+const addReportNote = async (req, res) => {
+  try {
+    const reportId = Number(req.params.id);
+    const userId = req.user.userId;
+    const { note } = req.body;
+
+    if (!note || note.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Note is required",
+      });
+    }
+
+    const report = await prisma.report.findUnique({
+      where: {
+        id: reportId,
+      },
+    });
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    const reportNote = await prisma.reportUpdate.create({
+      data: {
+        reportId,
+        userId,
+        type: "NOTE",
+        note: note.trim(),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Report note added successfully",
+      data: reportNote,
+    });
+  } catch (error) {
+    console.error("Add report note error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };
@@ -354,5 +434,6 @@ module.exports = {
   getReportById,
   updateReportStatus,
   confirmReport,
-  getReportHistory
+  getReportHistory,
+  addReportNote,
 };
