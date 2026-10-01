@@ -324,9 +324,110 @@ const completeAssignment = async (req, res) => {
   }
 };
 
+const updateAssignmentStatus = async (req, res) => {
+  try {
+    const assignmentId = Number(req.params.id);
+    const { status, note } = req.body;
+
+    const allowedStatuses = ["IN_PROGRESS", "COMPLETED"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid assignment status",
+      });
+    }
+
+    const assignment = await prisma.assignment.findUnique({
+      where: {
+        id: assignmentId,
+      },
+      include: {
+        report: true,
+      },
+    });
+
+    if (!assignment) {
+      return res.status(404).json({
+        success: false,
+        message: "Assignment not found",
+      });
+    }
+
+    // Pastikan assignment milik teknisi yang sedang login
+    if (assignment.technicianId !== req.user.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not assigned to this report",
+      });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedAssignment = await tx.assignment.update({
+        where: {
+          id: assignmentId,
+        },
+        data: {
+          completedAt:
+            status === "COMPLETED" ? new Date() : null,
+        },
+      });
+
+      const updatedReport = await tx.report.update({
+        where: {
+          id: assignment.reportId,
+        },
+        data: {
+          status,
+        },
+      });
+
+      const reportUpdate = await tx.reportUpdate.create({
+        data: {
+          reportId: assignment.reportId,
+          userId: req.user.userId,
+          type: "STATUS_CHANGE",
+          status,
+          note: note || null,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: req.user.userId,
+          action: "UPDATE",
+          entity: "Assignment",
+          entityId: assignmentId,
+          details: `Assignment ${assignmentId} status changed to ${status}`,
+        },
+      });
+
+      return {
+        assignment: updatedAssignment,
+        report: updatedReport,
+        reportUpdate,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Assignment status updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Update assignment status error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   assignReport,
   getMyAssignments,
   startAssignment,
-  completeAssignment
+  completeAssignment,
+  updateAssignmentStatus,
 };

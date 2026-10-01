@@ -1,15 +1,19 @@
 const express = require("express");
 
 const {
-  assignReport, getMyAssignments, startAssignment, completeAssignment
+  assignReport,
+  getMyAssignments,
+  startAssignment,
+  completeAssignment,
+  updateAssignmentStatus,
 } = require("../controllers/assignment.controller");
 
 const {
-  authenticate
+  authenticate,
 } = require("../middlewares/auth.middleware");
 
 const {
-  requireRole
+  requireRole,
 } = require("../middlewares/role.middleware");
 
 const router = express.Router();
@@ -40,6 +44,13 @@ router.patch(
   authenticate,
   requireRole("TECHNICIAN"),
   completeAssignment
+);
+
+router.patch(
+  "/:id/status",
+  authenticate,
+  requireRole("TECHNICIAN"),
+  updateAssignmentStatus
 );
 
 module.exports = router;
