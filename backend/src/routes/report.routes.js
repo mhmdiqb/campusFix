@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { createReport, getReports, getReportById, updateReportStatus, confirmReport, getReportHistory, addReportNote } = require("../controllers/report.controller");
+const { createReport, getReports, getReportById, updateReportStatus, confirmReport, getReportHistory, addReportNote, getReportDetail } = require("../controllers/report.controller");
 
 const { authenticate } = require("../middlewares/auth.middleware");
 
@@ -35,6 +35,12 @@ router.patch(
   "/:id/confirm",
   authenticate,
   confirmReport
+);
+
+router.get(
+  "/:id",
+  authenticate,
+  getReportDetail
 );
 
 module.exports = router;

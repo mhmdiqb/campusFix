@@ -411,6 +411,77 @@ const addReportNote = async (req, res) => {
   }
 };
 
+const getReportDetail = async (req, res) => {
+  try {
+    const reportId = Number(req.params.id);
+
+    const report = await prisma.report.findUnique({
+      where: {
+        id: reportId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        images: true,
+
+        assignment: {
+          include: {
+            technician: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+
+        updates: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Report detail retrieved successfully",
+      data: report,
+    });
+  } catch (error) {
+    console.error("Get report detail error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createReport,
   getReports,
@@ -419,4 +490,5 @@ module.exports = {
   confirmReport,
   getReportHistory,
   addReportNote,
+  getReportDetail, 
 };
