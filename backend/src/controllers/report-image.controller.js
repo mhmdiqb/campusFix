@@ -25,6 +25,13 @@ const addReportImage = async (req, res) => {
       });
     }
 
+    if (report.userId !== req.user.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to add image to this report"
+      })
+    }
+
     const image = await prisma.reportImage.create({
       data: {
         reportId,
