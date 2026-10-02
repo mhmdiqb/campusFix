@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { createReport, getReports, getReportById, updateReportStatus, confirmReport, getReportHistory, addReportNote, getReportDetail } = require("../controllers/report.controller");
+const { createReport, getReports, updateReportStatus, confirmReport, getReportHistory, addReportNote, getReportDetail } = require("../controllers/report.controller");
 
 const { authenticate } = require("../middlewares/auth.middleware");
 
@@ -21,7 +21,6 @@ router.post(
   authenticate,
   addReportNote
 );
-router.get("/:id", authenticate, getReportById);
 
 
 router.patch(
