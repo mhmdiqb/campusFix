@@ -3,20 +3,23 @@ const { createAuditLog } = require("../utils/audit-log");
 
 const createReport = async (req, res) => {
   try {
-    const { title, description, priority, location } = req.body;
+    const { title, description, priority, facilityId } = req.body;
 
-    if (!title || !description || !location) {
+    // Validasi
+    if (!title || !description || !facilityId) {
       return res.status(400).json({
         success: false,
-        message: "Title, description, and location are required",
+        message: "Judul, deskripsi, dan fasilitas wajib diisi.",
       });
     }
 
+    // Buat laporan
     const report = await prisma.report.create({
       data: {
         title,
         description,
         priority: priority || "MEDIUM",
+        facilityId: Number(facilityId),
         userId: req.user.userId,
       },
     });

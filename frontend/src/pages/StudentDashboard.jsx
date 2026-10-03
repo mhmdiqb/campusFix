@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./StudentDashboard.css";
 
 function StudentDashboard() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [loadingReports, setLoadingReports] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -10,7 +17,36 @@ function StudentDashboard() {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+
+    fetchReports();
   }, []);
+
+  const fetchReports = async () => {
+    try {
+      setLoadingReports(true);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:3000/api/reports",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Reports:", response.data);
+
+      setReports(response.data.data || []);
+    } catch (err) {
+      console.error("Gagal mengambil laporan:", err);
+      setError("Gagal mengambil data laporan.");
+    } finally {
+      setLoadingReports(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -18,6 +54,27 @@ function StudentDashboard() {
 
     window.location.href = "/login";
   };
+
+  const totalReports = reports.length;
+
+  const processedReports = reports.filter(
+    (report) =>
+      report.status === "IN_PROGRESS" ||
+      report.status === "PROCESSING"
+  ).length;
+
+  const completedReports = reports.filter(
+    (report) =>
+      report.status === "COMPLETED" ||
+      report.status === "DONE"
+  ).length;
+
+  const pendingReports = reports.filter(
+    (report) =>
+      report.status === "REPORTED" ||
+      report.status === "PENDING" ||
+      report.status === "WAITING"
+  ).length;
 
   return (
     <div className="student-dashboard">
@@ -54,6 +111,7 @@ function StudentDashboard() {
         <header className="dashboard-header">
           <div>
             <h1>Dashboard</h1>
+
             <p>
               Selamat datang kembali,{" "}
               <strong>{user?.name || "Mahasiswa"}</strong>.
@@ -75,22 +133,22 @@ function StudentDashboard() {
         <section className="stats-grid">
           <div className="stat-card">
             <span>Total Laporan</span>
-            <strong>0</strong>
+            <strong>{totalReports}</strong>
           </div>
 
           <div className="stat-card">
             <span>Diproses</span>
-            <strong>0</strong>
+            <strong>{processedReports}</strong>
           </div>
 
           <div className="stat-card">
             <span>Selesai</span>
-            <strong>0</strong>
+            <strong>{completedReports}</strong>
           </div>
 
           <div className="stat-card">
             <span>Menunggu</span>
-            <strong>0</strong>
+            <strong>{pendingReports}</strong>
           </div>
         </section>
 
@@ -101,24 +159,61 @@ function StudentDashboard() {
               <p>Daftar laporan fasilitas yang kamu buat.</p>
             </div>
 
-            <button className="primary-button">
+            <button
+              className="primary-button"
+              onClick={() => navigate("/reports/create")}
+            >
               + Buat Laporan
             </button>
           </div>
 
-          <div className="empty-state">
-            <div className="empty-icon">📋</div>
+          {loadingReports ? (
+            <div className="empty-state">
+              <h3>Memuat laporan...</h3>
+            </div>
+          ) : error ? (
+            <div className="empty-state">
+              <h3>{error}</h3>
+            </div>
+          ) : reports.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📋</div>
 
-            <h3>Belum ada laporan</h3>
+              <h3>Belum ada laporan</h3>
 
-            <p>
-              Kamu belum membuat laporan kerusakan fasilitas.
-            </p>
+              <p>
+                Kamu belum membuat laporan kerusakan fasilitas.
+              </p>
 
-            <button className="primary-button">
-              Buat Laporan Pertama
-            </button>
-          </div>
+              <button
+                className="primary-button"
+                onClick={() => navigate("/reports/create")}
+              >
+                Buat Laporan Pertama
+              </button>
+            </div>
+          ) : (
+            <div className="reports-list">
+              {reports.slice(0, 5).map((report) => (
+                <div className="report-card" key={report.id}>
+                  <div>
+                    <h3>{report.title}</h3>
+
+                    <p>{report.description}</p>
+
+                    <small>
+                      Fasilitas:{" "}
+                      {report.facility?.name || "Tidak diketahui"}
+                    </small>
+                  </div>
+
+                  <div>
+                    <strong>{report.status}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>
