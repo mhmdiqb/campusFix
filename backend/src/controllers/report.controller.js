@@ -399,12 +399,39 @@ const addReportNote = async (req, res) => {
       where: {
         id: reportId,
       },
+      include: {
+        assignment: true,
+      },
     });
 
     if (!report) {
       return res.status(404).json({
         success: false,
         message: "Report not found",
+      });
+    }
+
+    // STUDENT hanya boleh menambahkan note pada laporan miliknya
+    if (
+      req.user.role === "STUDENT" &&
+      report.userId !== userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to add a note to this report",
+      });
+    }
+
+    // TECHNICIAN hanya boleh menambahkan note pada laporan
+    // yang ditugaskan kepadanya
+    if (
+      req.user.role === "TECHNICIAN" &&
+      (!report.assignment ||
+        report.assignment.technicianId !== userId)
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not assigned to this report",
       });
     }
 
