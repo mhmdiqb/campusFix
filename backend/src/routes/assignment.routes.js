@@ -6,6 +6,7 @@ const {
   startAssignment,
   completeAssignment,
   updateAssignmentStatus,
+  getTechnicians
 } = require("../controllers/assignment.controller");
 
 const {
@@ -17,6 +18,13 @@ const {
 } = require("../middlewares/role.middleware");
 
 const router = express.Router();
+
+router.get(
+  "/technicians",
+  authenticate,
+  requireRole("ADMIN"),
+  getTechnicians
+);
 
 router.get(
   "/my",

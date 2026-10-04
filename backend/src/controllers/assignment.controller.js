@@ -424,10 +424,42 @@ const updateAssignmentStatus = async (req, res) => {
   }
 };
 
+const getTechnicians = async (req, res) => {
+  try {
+    const technicians = await prisma.user.findMany({
+      where: {
+        role: "TECHNICIAN",
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Technicians retrieved successfully",
+      data: technicians,
+    });
+  } catch (error) {
+    console.error("Get technicians error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   assignReport,
   getMyAssignments,
   startAssignment,
   completeAssignment,
   updateAssignmentStatus,
+  getTechnicians,
 };
