@@ -228,6 +228,16 @@ const startAssignment = async (req, res) => {
       }
     });
 
+    await prisma.auditLog.create({
+      data: {
+        userId: technicianId,
+        action: "UPDATE",
+        entity: "Report",
+        entityId: reportId,
+        details: `Report ${reportId} status changed to IN_PROGRESS by technician ${technicianId}`,
+      },
+    });
+
     return res.status(200).json({
       success: true,
       message: "Report status updated to IN_PROGRESS",
@@ -289,6 +299,16 @@ const completeAssignment = async (req, res) => {
       data: {
         status: "COMPLETED"
       }
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: technicianId,
+        action: "UPDATE",
+        entity: "Report",
+        entityId: reportId,
+        details: `Report ${reportId} status changed to COMPLETED by technician ${technicianId}`,
+      },
     });
 
     await prisma.assignment.update({
