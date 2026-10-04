@@ -340,14 +340,35 @@ const getReportHistory = async (req, res) => {
       });
     }
 
-    // User hanya boleh melihat history laporan miliknya
-    // Admin juga boleh melihat semua laporan
-    if (req.user.role !== "ADMIN" && report.userId !== userId) {
+        // STUDENT hanya boleh melihat history laporan miliknya
+    if (
+      req.user.role === "STUDENT" &&
+      report.userId !== userId
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not allowed to view this report history",
       });
     }
+
+    // TECHNICIAN hanya boleh melihat history laporan
+    // yang ditugaskan kepadanya
+    if (req.user.role === "TECHNICIAN") {
+      const assignment = await prisma.assignment.findUnique({
+        where: {
+          reportId,
+        },
+      });
+
+    if (!assignment || assignment.technicianId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not assigned to this report",
+      });
+    }
+  }
+
+    // ADMIN boleh melihat semua history
 
     const history = await prisma.reportUpdate.findMany({
       where: {
