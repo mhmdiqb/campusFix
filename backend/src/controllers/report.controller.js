@@ -307,6 +307,16 @@ const confirmReport = async (req, res) => {
       },
     });
 
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: "UPDATE",
+        entity: "Report",
+        entityId: reportId,
+        details: `Report ${reportId} confirmed by student ${userId}`,
+      },
+    });
+
     return res.status(200).json({
       success: true,
       message: "Report confirmed successfully",
