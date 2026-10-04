@@ -484,6 +484,16 @@ const addReportNote = async (req, res) => {
       },
     });
 
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: "CREATE",
+        entity: "ReportUpdate",
+        entityId: reportNote.id,
+        details: `Added note to report ${reportId}`,
+      },
+    });
+
     return res.status(201).json({
       success: true,
       message: "Report note added successfully",
