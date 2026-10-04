@@ -24,13 +24,27 @@ function Login() {
 
       const { token, user } = response.data.data;
 
+      // Simpan token dan data user
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/");
+      // Redirect berdasarkan role
+      if (user.role === "ADMIN") {
+        navigate("/admin");
+      } else if (user.role === "TECHNICIAN") {
+        navigate("/technician");
+      } else if (user.role === "STUDENT") {
+        navigate("/student");
+      } else {
+        // Jika role tidak dikenali
+        navigate("/");
+      }
     } catch (error) {
+      console.error("Login gagal:", error);
+
       setError(
-        error.response?.data?.message || "Email atau password salah"
+        error.response?.data?.message ||
+          "Email atau password salah"
       );
     } finally {
       setLoading(false);
@@ -40,12 +54,14 @@ function Login() {
   return (
     <div>
       <h1>CampusFix</h1>
+
       <h2>Login</h2>
 
       <form onSubmit={handleLogin}>
         <div>
           <label>Email</label>
           <br />
+
           <input
             type="email"
             value={email}
@@ -60,6 +76,7 @@ function Login() {
         <div>
           <label>Password</label>
           <br />
+
           <input
             type="password"
             value={password}
