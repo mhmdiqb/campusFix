@@ -37,8 +37,6 @@ function StudentDashboard() {
         }
       );
 
-      console.log("Reports:", response.data);
-
       setReports(response.data.data || []);
     } catch (err) {
       console.error("Gagal mengambil laporan:", err);
@@ -52,7 +50,7 @@ function StudentDashboard() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const totalReports = reports.length;
@@ -60,160 +58,320 @@ function StudentDashboard() {
   const processedReports = reports.filter(
     (report) =>
       report.status === "IN_PROGRESS" ||
-      report.status === "PROCESSING"
+      report.status === "ASSIGNED"
   ).length;
 
   const completedReports = reports.filter(
     (report) =>
       report.status === "COMPLETED" ||
-      report.status === "DONE"
+      report.status === "CONFIRMED"
   ).length;
 
   const pendingReports = reports.filter(
     (report) =>
       report.status === "REPORTED" ||
-      report.status === "PENDING" ||
-      report.status === "WAITING"
+      report.status === "VERIFIED"
   ).length;
+
+  const getStatusLabel = (status) => {
+    const statusMap = {
+      REPORTED: "Menunggu",
+      VERIFIED: "Diverifikasi",
+      ASSIGNED: "Ditugaskan",
+      IN_PROGRESS: "Sedang Diproses",
+      COMPLETED: "Selesai",
+      CONFIRMED: "Dikonfirmasi",
+      REJECTED: "Ditolak",
+    };
+
+    return statusMap[status] || status;
+  };
+
+  const getPriorityLabel = (priority) => {
+    const priorityMap = {
+      LOW: "Rendah",
+      MEDIUM: "Sedang",
+      HIGH: "Tinggi",
+      CRITICAL: "Kritis",
+    };
+
+    return priorityMap[priority] || priority;
+  };
+
+  const getStatusClass = (status) => {
+    return status?.toLowerCase().replace("_", "-") || "";
+  };
+
+  const getPriorityClass = (priority) => {
+    return priority?.toLowerCase() || "";
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="student-dashboard">
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <h2>CampusFix</h2>
-          <span>Student Portal</span>
+          <div className="logo-icon">CF</div>
+
+          <div>
+            <h2>CampusFix</h2>
+            <span>Student Portal</span>
+          </div>
         </div>
 
-        <nav>
-          <a href="#" className="active">
+        <nav className="sidebar-nav">
+          <button
+            className="nav-item active"
+            onClick={() => navigate("/")}
+          >
+            <span>⌂</span>
             Dashboard
-          </a>
+          </button>
 
-          <a href="#">
+          <button
+            className="nav-item"
+            onClick={() => navigate("/")}
+          >
+            <span>▣</span>
             Laporan Saya
-          </a>
+          </button>
 
-          <a href="#">
+          <button
+            className="nav-item"
+            onClick={() => navigate("/reports/create")}
+          >
+            <span>＋</span>
             Buat Laporan
-          </a>
-
-          <a href="#">
-            Riwayat
-          </a>
+          </button>
         </nav>
 
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="sidebar-bottom">
+          <button
+            className="nav-item logout-button"
+            onClick={handleLogout}
+          >
+            <span>↪</span>
+            Logout
+          </button>
+        </div>
       </aside>
 
+      {/* MAIN CONTENT */}
       <main className="dashboard-content">
+        {/* HEADER */}
         <header className="dashboard-header">
           <div>
-            <h1>Dashboard</h1>
+            <p className="header-label">STUDENT DASHBOARD</p>
 
-            <p>
-              Selamat datang kembali,{" "}
-              <strong>{user?.name || "Mahasiswa"}</strong>.
+            <h1>
+              Halo, {user?.name?.split(" ")[0] || "Mahasiswa"} 👋
+            </h1>
+
+            <p className="header-description">
+              Pantau dan kelola laporan fasilitas kampus kamu.
             </p>
           </div>
 
           <div className="user-info">
             <div className="user-avatar">
-              {user?.name?.charAt(0) || "M"}
+              {user?.name?.charAt(0)?.toUpperCase() || "M"}
             </div>
 
-            <div>
+            <div className="user-details">
               <strong>{user?.name || "Mahasiswa"}</strong>
-              <span>{user?.role || "STUDENT"}</span>
+              <span>Mahasiswa</span>
             </div>
           </div>
         </header>
 
+        {/* STATS */}
         <section className="stats-grid">
           <div className="stat-card">
-            <span>Total Laporan</span>
-            <strong>{totalReports}</strong>
+            <div className="stat-icon">📋</div>
+
+            <div>
+              <span>Total Laporan</span>
+              <strong>{totalReports}</strong>
+            </div>
           </div>
 
           <div className="stat-card">
-            <span>Diproses</span>
-            <strong>{processedReports}</strong>
+            <div className="stat-icon">⏳</div>
+
+            <div>
+              <span>Menunggu</span>
+              <strong>{pendingReports}</strong>
+            </div>
           </div>
 
           <div className="stat-card">
-            <span>Selesai</span>
-            <strong>{completedReports}</strong>
+            <div className="stat-icon">🔧</div>
+
+            <div>
+              <span>Diproses</span>
+              <strong>{processedReports}</strong>
+            </div>
           </div>
 
           <div className="stat-card">
-            <span>Menunggu</span>
-            <strong>{pendingReports}</strong>
+            <div className="stat-icon">✓</div>
+
+            <div>
+              <span>Selesai</span>
+              <strong>{completedReports}</strong>
+            </div>
           </div>
         </section>
 
+        {/* REPORT SECTION */}
         <section className="dashboard-section">
           <div className="section-header">
             <div>
               <h2>Laporan Terbaru</h2>
-              <p>Daftar laporan fasilitas yang kamu buat.</p>
+
+              <p>
+                Pantau perkembangan laporan fasilitas yang kamu buat.
+              </p>
             </div>
 
             <button
               className="primary-button"
               onClick={() => navigate("/reports/create")}
             >
-              + Buat Laporan
+              ＋ Buat Laporan
             </button>
           </div>
 
-          {loadingReports ? (
+          {/* LOADING */}
+          {loadingReports && (
             <div className="empty-state">
-              <h3>Memuat laporan...</h3>
-            </div>
-          ) : error ? (
-            <div className="empty-state">
-              <h3>{error}</h3>
-            </div>
-          ) : reports.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">📋</div>
+              <div className="loading-spinner"></div>
 
-              <h3>Belum ada laporan</h3>
+              <h3>Memuat laporan...</h3>
 
               <p>
-                Kamu belum membuat laporan kerusakan fasilitas.
+                Tunggu sebentar, kami sedang mengambil data laporan.
               </p>
+            </div>
+          )}
+
+          {/* ERROR */}
+          {!loadingReports && error && (
+            <div className="empty-state error-state">
+              <div className="empty-icon">⚠️</div>
+
+              <h3>Gagal memuat laporan</h3>
+
+              <p>{error}</p>
 
               <button
                 className="primary-button"
-                onClick={() => navigate("/reports/create")}
+                onClick={fetchReports}
               >
-                Buat Laporan Pertama
+                Coba Lagi
               </button>
             </div>
-          ) : (
-            <div className="reports-list">
-              {reports.slice(0, 5).map((report) => (
-                <div className="report-card" key={report.id}>
-                  <div>
-                    <h3>{report.title}</h3>
-
-                    <p>{report.description}</p>
-
-                    <small>
-                      Fasilitas:{" "}
-                      {report.facility?.name || "Tidak diketahui"}
-                    </small>
-                  </div>
-
-                  <div>
-                    <strong>{report.status}</strong>
-                  </div>
-                </div>
-              ))}
-            </div>
           )}
+
+          {/* EMPTY */}
+          {!loadingReports &&
+            !error &&
+            reports.length === 0 && (
+              <div className="empty-state">
+                <div className="empty-icon">📋</div>
+
+                <h3>Belum ada laporan</h3>
+
+                <p>
+                  Kamu belum membuat laporan kerusakan fasilitas
+                  kampus.
+                </p>
+
+                <button
+                  className="primary-button"
+                  onClick={() => navigate("/reports/create")}
+                >
+                  Buat Laporan Pertama
+                </button>
+              </div>
+            )}
+
+          {/* REPORT LIST */}
+          {!loadingReports &&
+            !error &&
+            reports.length > 0 && (
+              <div className="reports-list">
+                {reports.slice(0, 5).map((report) => (
+                  <div
+                    className="report-card"
+                    key={report.id}
+                  >
+                    <div className="report-main">
+                      <div className="report-top">
+                        <span className="report-id">
+                          LAPORAN #{report.id}
+                        </span>
+
+                        <span
+                          className={`status-badge ${getStatusClass(
+                            report.status
+                          )}`}
+                        >
+                          {getStatusLabel(report.status)}
+                        </span>
+                      </div>
+
+                      <h3>{report.title}</h3>
+
+                      <p className="report-description">
+                        {report.description}
+                      </p>
+
+                      <div className="report-meta">
+                        <span>
+                          📍{" "}
+                          {report.facility?.name ||
+                            "Fasilitas tidak diketahui"}
+                        </span>
+
+                        <span>
+                          📅 {formatDate(report.createdAt)}
+                        </span>
+
+                        {report.priority && (
+                          <span
+                            className={`priority-badge ${getPriorityClass(
+                              report.priority
+                            )}`}
+                          >
+                            {getPriorityLabel(report.priority)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      className="detail-button"
+                      onClick={() =>
+                        navigate(`/reports/${report.id}`)
+                      }
+                    >
+                      Lihat Detail →
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
         </section>
       </main>
     </div>
