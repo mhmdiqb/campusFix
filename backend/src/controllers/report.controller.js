@@ -50,7 +50,23 @@ const createReport = async (req, res) => {
 
 const getReports = async (req, res) => {
   try {
+    let where = {};
+
+    // STUDENT hanya melihat laporan miliknya
+    if (req.user.role === "STUDENT") {
+      where.userId = req.user.userId;
+    }
+
+    // TECHNICIAN hanya melihat laporan yang ditugaskan kepadanya
+    if (req.user.role === "TECHNICIAN") {
+      where.assignment = {
+        technicianId: req.user.userId,
+      };
+    }
+
+    // ADMIN tidak diberi filter sehingga bisa melihat semua laporan
     const reports = await prisma.report.findMany({
+      where,
       orderBy: {
         createdAt: "desc",
       },
@@ -69,18 +85,29 @@ const getReports = async (req, res) => {
             email: true,
           },
         },
+        assignment: {
+          include: {
+            technician: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Reports retrieved successfully",
       data: reports,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Get reports error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -467,6 +494,28 @@ const getReportDetail = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Report not found",
+      });
+    }
+
+    // STUDENT hanya boleh melihat laporan miliknya
+    if (
+      req.user.role === "STUDENT" &&
+      report.user.id !== req.user.userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to view this report",
+      });
+    }
+
+    // TECHNICIAN hanya boleh melihat laporan yang ditugaskan kepadanya
+    if (
+      req.user.role === "TECHNICIAN" &&
+      report.assignment?.technician?.id !== req.user.userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not assigned to this report",
       });
     }
 
