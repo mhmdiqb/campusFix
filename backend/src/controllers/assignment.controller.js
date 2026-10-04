@@ -362,6 +362,26 @@ const updateAssignmentStatus = async (req, res) => {
       });
     }
 
+    if (
+      status === "IN_PROGRESS" &&
+      assignment.report.status !== "ASSIGNED"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Report must be ASSIGNED first",
+      });
+    }
+
+    if (
+      status === "COMPLETED" &&
+      assignment.report.status !== "IN_PROGRESS"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Report must be IN_PROGRESS first",
+      });
+    }
+
     const result = await prisma.$transaction(async (tx) => {
       const updatedAssignment = await tx.assignment.update({
         where: {
