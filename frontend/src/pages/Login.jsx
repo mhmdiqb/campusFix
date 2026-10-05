@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -36,7 +37,6 @@ function Login() {
       } else if (user.role === "STUDENT") {
         navigate("/student");
       } else {
-        // Jika role tidak dikenali
         navigate("/");
       }
     } catch (error) {
@@ -52,50 +52,105 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>CampusFix</h1>
+    <div className="login-page">
+      <div className="login-container">
 
-      <h2>Login</h2>
+        {/* LEFT SIDE */}
+        <div className="login-brand">
+          <div className="brand-logo">CF</div>
 
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email</label>
-          <br />
+          <h1>CampusFix</h1>
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Masukkan email"
-            required
-          />
+          <p>
+            Laporkan kerusakan fasilitas kampus
+            dengan mudah dan pantau proses
+            perbaikannya.
+          </p>
+
+          <div className="brand-feature">
+            <span>✓</span>
+            <span>Pelaporan fasilitas lebih mudah</span>
+          </div>
+
+          <div className="brand-feature">
+            <span>✓</span>
+            <span>Pantau status laporan secara real-time</span>
+          </div>
+
+          <div className="brand-feature">
+            <span>✓</span>
+            <span>Terhubung dengan teknisi kampus</span>
+          </div>
         </div>
 
-        <br />
+        {/* RIGHT SIDE */}
+        <div className="login-card">
 
-        <div>
-          <label>Password</label>
-          <br />
+          <div className="login-header">
+            <h2>Selamat Datang 👋</h2>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Masukkan password"
-            required
-          />
+            <p>
+              Masuk ke akun CampusFix kamu
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin}>
+
+            {/* EMAIL */}
+            <div className="form-group">
+              <label>Email</label>
+
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Masukkan email kamu"
+                required
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div className="form-group">
+              <label>Password</label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Masukkan password kamu"
+                required
+              />
+            </div>
+
+            {/* ERROR */}
+            {error && (
+              <div className="login-error">
+                ⚠️ {error}
+              </div>
+            )}
+
+            {/* BUTTON */}
+            <button
+              type="submit"
+              className="login-button"
+              disabled={loading}
+            >
+              {loading ? "Memproses..." : "Login"}
+            </button>
+
+          </form>
+
+          <div className="login-footer">
+            <span>CampusFix</span>
+            <span>•</span>
+            <span>Campus Facility Reporting System</span>
+          </div>
+
         </div>
-
-        <br />
-
-        {error && <p>{error}</p>}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Loading..." : "Login"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
 
 export default Login;
+

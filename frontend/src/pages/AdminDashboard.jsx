@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
+  const navigate = useNavigate();
+
   const [reports, setReports] = useState([]);
   const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,9 +21,6 @@ function AdminDashboard() {
     "REJECTED",
   ];
 
-  // =========================
-  // AMBIL DATA TEKNISI
-  // =========================
   const fetchTechnicians = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -39,9 +40,6 @@ function AdminDashboard() {
     }
   };
 
-  // =========================
-  // AMBIL DATA LAPORAN
-  // =========================
   const fetchReports = async () => {
     try {
       setLoading(true);
@@ -67,17 +65,11 @@ function AdminDashboard() {
     }
   };
 
-  // =========================
-  // LOAD DATA SAAT HALAMAN DIBUKA
-  // =========================
   useEffect(() => {
     fetchReports();
     fetchTechnicians();
   }, []);
 
-  // =========================
-  // ASSIGN TEKNISI
-  // =========================
   const handleAssignTechnician = async (reportId, technicianId) => {
     if (!technicianId) {
       alert("Pilih teknisi terlebih dahulu.");
@@ -101,7 +93,6 @@ function AdminDashboard() {
 
       alert("Laporan berhasil ditugaskan ke teknisi.");
 
-      // Refresh laporan
       fetchReports();
     } catch (err) {
       console.error("Gagal assign teknisi:", err);
@@ -113,9 +104,6 @@ function AdminDashboard() {
     }
   };
 
-  // =========================
-  // UPDATE STATUS
-  // =========================
   const handleStatusChange = async (reportId, status) => {
     try {
       const token = localStorage.getItem("token");
@@ -132,7 +120,6 @@ function AdminDashboard() {
         }
       );
 
-      // Refresh data
       fetchReports();
     } catch (err) {
       console.error("Gagal mengubah status:", err);
@@ -144,13 +131,14 @@ function AdminDashboard() {
     }
   };
 
-  // =========================
-  // STATISTIK
-  // =========================
   const totalReports = reports.length;
 
   const reportedCount = reports.filter(
     (report) => report.status === "REPORTED"
+  ).length;
+
+  const assignedCount = reports.filter(
+    (report) => report.status === "ASSIGNED"
   ).length;
 
   const inProgressCount = reports.filter(
@@ -161,194 +149,374 @@ function AdminDashboard() {
     (report) => report.status === "COMPLETED"
   ).length;
 
-  // =========================
-  // LOADING
-  // =========================
+  const getStatusLabel = (status) => {
+    const labels = {
+      REPORTED: "Baru",
+      VERIFIED: "Terverifikasi",
+      ASSIGNED: "Ditugaskan",
+      IN_PROGRESS: "Diproses",
+      COMPLETED: "Selesai",
+      CONFIRMED: "Dikonfirmasi",
+      REJECTED: "Ditolak",
+    };
+
+    return labels[status] || status;
+  };
+
   if (loading) {
-    return <h2>Loading dashboard...</h2>;
+    return (
+      <div className="admin-loading">
+        <div className="loading-spinner"></div>
+        <h2>Loading Admin Dashboard...</h2>
+      </div>
+    );
   }
 
-  // =========================
-  // DASHBOARD
-  // =========================
   return (
-    <div
-      style={{
-        padding: "30px",
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}
-    >
-      <h1>Admin Dashboard</h1>
+    <div className="admin-dashboard">
 
-      <p>
-        Kelola dan pantau laporan kerusakan fasilitas kampus.
-      </p>
+      {/* SIDEBAR */}
+      <aside className="admin-sidebar">
 
-      {/* ERROR */}
-      {error && (
-        <div
-          style={{
-            background: "#ffdede",
-            color: "#b00020",
-            padding: "12px",
-            marginBottom: "20px",
-            borderRadius: "8px",
+        <div className="admin-logo">
+          <div className="logo-small">CF</div>
+
+          <h2>CampusFix</h2>
+
+          <span>Admin Portal</span>
+        </div>
+
+        <nav className="admin-nav">
+
+          <a href="/admin" className="active">
+            ▦ Dashboard
+          </a>
+
+          <a href="/admin/reports">
+            ▤ Laporan
+          </a>
+
+          <a href="/admin/technicians">
+            ♙ Teknisi
+          </a>
+
+        </nav>
+
+        <button
+          className="admin-logout"
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
           }}
         >
-          {error}
-        </div>
-      )}
+          ↪ Logout
+        </button>
 
-      {/* =========================
-          STATISTIK
-      ========================= */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "15px",
-          marginBottom: "30px",
-        }}
-      >
-        <div className="stat-card">
-          <h3>Total Laporan</h3>
-          <strong>{totalReports}</strong>
-        </div>
+      </aside>
 
-        <div className="stat-card">
-          <h3>Baru</h3>
-          <strong>{reportedCount}</strong>
-        </div>
+      {/* CONTENT */}
+      <main className="admin-content">
 
-        <div className="stat-card">
-          <h3>Diproses</h3>
-          <strong>{inProgressCount}</strong>
-        </div>
+        {/* HEADER */}
+        <header className="admin-header">
 
-        <div className="stat-card">
-          <h3>Selesai</h3>
-          <strong>{completedCount}</strong>
-        </div>
-      </div>
+          <div>
+            <span className="portal-label">
+              ADMIN PORTAL
+            </span>
 
-      {/* =========================
-          DAFTAR LAPORAN
-      ========================= */}
-      <h2>Daftar Laporan</h2>
+            <h1>Admin Dashboard</h1>
 
-      {reports.length === 0 ? (
-        <p>Belum ada laporan.</p>
-      ) : (
-        <div>
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "15px",
-              }}
-            >
-              <h3>{report.title}</h3>
+            <p>
+              Kelola dan pantau laporan kerusakan fasilitas kampus.
+            </p>
+          </div>
 
-              <p>{report.description}</p>
+          <div className="admin-avatar">
+            A
+          </div>
 
-              <p>
-                <strong>Pelapor:</strong>{" "}
-                {report.user?.name || "-"}
-              </p>
+        </header>
 
-              <p>
-                <strong>Email:</strong>{" "}
-                {report.user?.email || "-"}
-              </p>
+        {/* ERROR */}
+        {error && (
+          <div className="admin-error">
+            {error}
+          </div>
+        )}
 
-              <p>
-                <strong>Fasilitas:</strong>{" "}
-                {report.facility?.name || "-"}
-              </p>
+        {/* STATISTICS */}
+        <section className="admin-stats">
 
-              <p>
-                <strong>Lokasi:</strong>{" "}
-                {report.facility?.location || "-"}
-              </p>
+          <div className="admin-stat-card">
 
-              <p>
-                <strong>Prioritas:</strong>{" "}
-                {report.priority}
-              </p>
-
-              {/* =========================
-                  ASSIGN TEKNISI
-              ========================= */}
-              <div
-                style={{
-                  marginTop: "15px",
-                  marginBottom: "15px",
-                }}
-              >
-                <strong>Teknisi: </strong>
-
-                <select
-                  defaultValue=""
-                  onChange={(e) =>
-                    handleAssignTechnician(
-                      report.id,
-                      e.target.value
-                    )
-                  }
-                  style={{
-                    marginLeft: "10px",
-                    padding: "6px",
-                  }}
-                >
-                  <option value="">
-                    -- Pilih Teknisi --
-                  </option>
-
-                  {technicians.map((technician) => (
-                    <option
-                      key={technician.id}
-                      value={technician.id}
-                    >
-                      {technician.name} -{" "}
-                      {technician.email}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* =========================
-                  STATUS
-              ========================= */}
-              <div>
-                <strong>Status: </strong>
-
-                <select
-                  value={report.status}
-                  onChange={(e) =>
-                    handleStatusChange(
-                      report.id,
-                      e.target.value
-                    )
-                  }
-                >
-                  {statuses.map((status) => (
-                    <option
-                      key={status}
-                      value={status}
-                    >
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="stat-icon blue">
+              ▤
             </div>
-          ))}
-        </div>
-      )}
+
+            <div>
+              <span>Total Laporan</span>
+              <strong>{totalReports}</strong>
+            </div>
+
+          </div>
+
+          <div className="admin-stat-card">
+
+            <div className="stat-icon orange">
+              ◷
+            </div>
+
+            <div>
+              <span>Laporan Baru</span>
+              <strong>{reportedCount}</strong>
+            </div>
+
+          </div>
+
+          <div className="admin-stat-card">
+
+            <div className="stat-icon purple">
+              ⚙
+            </div>
+
+            <div>
+              <span>Ditugaskan</span>
+              <strong>{assignedCount}</strong>
+            </div>
+
+          </div>
+
+          <div className="admin-stat-card">
+
+            <div className="stat-icon green">
+              ✓
+            </div>
+
+            <div>
+              <span>Selesai</span>
+              <strong>{completedCount}</strong>
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* SUMMARY BAR */}
+        <section className="admin-summary">
+
+          <div>
+            🔧 Sedang Diproses{" "}
+            <strong>{inProgressCount}</strong>
+          </div>
+
+          <div>
+            👨‍🔧 Total Teknisi{" "}
+            <strong>{technicians.length}</strong>
+          </div>
+
+          <button
+            onClick={() => {
+              fetchReports();
+              fetchTechnicians();
+            }}
+          >
+            ↻ Refresh Data
+          </button>
+
+        </section>
+
+        {/* MANAGEMENT */}
+        <section className="admin-management">
+
+          <div className="management-header">
+
+            <div>
+              <span className="section-label">
+                MANAGEMENT
+              </span>
+
+              <h2>Daftar Laporan</h2>
+
+              <p>
+                Kelola laporan mahasiswa dan tugaskan teknisi.
+              </p>
+            </div>
+
+          </div>
+
+          {/* REPORTS */}
+          {reports.length === 0 ? (
+
+            <div className="empty-admin">
+              <div>📋</div>
+
+              <h3>Belum ada laporan</h3>
+
+              <p>
+                Belum ada laporan fasilitas dari mahasiswa.
+              </p>
+            </div>
+
+          ) : (
+
+            <div className="admin-report-grid">
+
+              {reports.map((report) => (
+
+                <div
+                  className="admin-report-card"
+                  key={report.id}
+                >
+
+                  {/* TOP */}
+                  <div className="report-top">
+
+                    <span>
+                      LAPORAN #{report.id}
+                    </span>
+
+                    <span
+                      className={`status-badge ${report.status?.toLowerCase()}`}
+                    >
+                      {getStatusLabel(report.status)}
+                    </span>
+
+                  </div>
+
+                  {/* TITLE */}
+                  <h3>
+                    {report.title}
+                  </h3>
+
+                  <p className="report-description">
+                    {report.description}
+                  </p>
+
+                  <div className="report-divider"></div>
+
+                  {/* INFO */}
+                  <div className="report-info-grid">
+
+                    <div>
+                      <span>Pelapor</span>
+                      <strong>
+                        {report.user?.name || "Mahasiswa"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Fasilitas</span>
+                      <strong>
+                        {report.facility?.name || "-"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Lokasi</span>
+                      <strong>
+                        {report.facility?.location || "-"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Prioritas</span>
+                      <strong>
+                        {report.priority || "-"}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <div className="report-divider"></div>
+
+                  {/* TECHNICIAN */}
+                  <div className="assignment-section">
+
+                    <label>
+                      Teknisi
+                    </label>
+
+                    <select
+                      defaultValue=""
+                      onChange={(e) =>
+                        handleAssignTechnician(
+                          report.id,
+                          e.target.value
+                        )
+                      }
+                    >
+
+                      <option value="">
+                        -- Pilih Teknisi --
+                      </option>
+
+                      {technicians.map((technician) => (
+
+                        <option
+                          key={technician.id}
+                          value={technician.id}
+                        >
+                          {technician.name}
+                        </option>
+
+                      ))}
+
+                    </select>
+
+                  </div>
+
+                  {/* STATUS */}
+                  <div className="assignment-section">
+
+                    <label>
+                      Update Status
+                    </label>
+
+                    <select
+                      value={report.status}
+                      onChange={(e) =>
+                        handleStatusChange(
+                          report.id,
+                          e.target.value
+                        )
+                      }
+                    >
+
+                      {statuses.map((status) => (
+
+                        <option
+                          key={status}
+                          value={status}
+                        >
+                          {getStatusLabel(status)}
+                        </option>
+
+                      ))}
+
+                    </select>
+
+                    <button
+                      className="detail-button"
+                      onClick={() => navigate(`/reports/${report.id}`)}
+                    >
+                      👁 Lihat Detail
+                    </button>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          )}
+
+        </section>
+
+      </main>
+
     </div>
   );
 }
