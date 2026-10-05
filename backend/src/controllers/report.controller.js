@@ -24,6 +24,18 @@ const createReport = async (req, res) => {
       },
     });
 
+    // Jika ada foto, simpan ke ReportImage
+    if (req.file) {
+      const imageUrl = `/uploads/${req.file.filename}`;
+
+      await prisma.reportImage.create({
+        data: {
+          reportId: report.id,
+          imageUrl,
+        },
+      });
+    }
+
     // Audit Log otomatis
     await createAuditLog({
       userId: req.user.userId,
@@ -260,11 +272,16 @@ const confirmReport = async (req, res) => {
     const reportId = Number(req.params.id);
     const userId = req.user.userId;
 
+    console.log("USER YANG LOGIN:", userId);
+
     const report = await prisma.report.findUnique({
       where: {
         id: reportId,
       },
     });
+
+    console.log("PEMILIK LAPORAN:", report?.userId);
+    console.log("STATUS LAPORAN:", report?.status);
 
     if (!report) {
       return res.status(404).json({
@@ -523,6 +540,14 @@ const getReportDetail = async (req, res) => {
             id: true,
             name: true,
             email: true,
+          },
+        },
+
+        facility: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
           },
         },
 
