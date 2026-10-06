@@ -3,17 +3,25 @@ const { createAuditLog } = require("../utils/audit-log");
 
 const createReport = async (req, res) => {
   try {
+    console.log("=== CREATE REPORT START ===");
+
+    console.log("BODY:", req.body);
+    console.log("USER:", req.user);
+    console.log("FILE:", req.file);
+
     const { title, description, priority, facilityId } = req.body;
 
-    // Validasi
     if (!title || !description || !facilityId) {
+      console.log("VALIDATION FAILED");
+
       return res.status(400).json({
         success: false,
         message: "Judul, deskripsi, dan fasilitas wajib diisi.",
       });
     }
 
-    // Buat laporan
+    console.log("1. Membuat report ke database...");
+
     const report = await prisma.report.create({
       data: {
         title,
@@ -24,8 +32,11 @@ const createReport = async (req, res) => {
       },
     });
 
-    // Jika ada foto, simpan ke ReportImage
+    console.log("2. Report berhasil dibuat:", report.id);
+
     if (req.file) {
+      console.log("3. Menyimpan gambar...");
+
       const imageUrl = `/uploads/${req.file.filename}`;
 
       await prisma.reportImage.create({
@@ -34,9 +45,12 @@ const createReport = async (req, res) => {
           imageUrl,
         },
       });
+
+      console.log("4. Gambar berhasil disimpan");
     }
 
-    // Audit Log otomatis
+    console.log("5. Membuat audit log...");
+
     await createAuditLog({
       userId: req.user.userId,
       action: "CREATE",
@@ -45,13 +59,18 @@ const createReport = async (req, res) => {
       details: `Created report ${report.title}`,
     });
 
+    console.log("6. Audit log berhasil");
+
+    console.log("7. Mengirim response");
+
     return res.status(201).json({
       success: true,
       message: "Report created successfully",
       data: report,
     });
   } catch (error) {
-    console.error("Create report error:", error);
+    console.error("=== CREATE REPORT ERROR ===");
+    console.error(error);
 
     return res.status(500).json({
       success: false,
