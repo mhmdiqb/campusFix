@@ -9,6 +9,7 @@ import ReportDetail from "./pages/ReportDetail";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminReports from "./pages/AdminReports";
 import AdminTechnicians from "./pages/AdminTechnicians";
+import MyReports from "./pages/MyReports";
 
 function App() {
   return (
@@ -84,6 +85,15 @@ function App() {
           element={
             <ProtectedRoute allowedRole="ADMIN">
               <AdminTechnicians />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <MyReports />
             </ProtectedRoute>
           }
         />

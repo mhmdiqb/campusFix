@@ -15,7 +15,11 @@ function StudentDashboard() {
     const savedUser = localStorage.getItem("user");
 
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (err) {
+        console.error("Data user tidak valid:", err);
+      }
     }
 
     fetchReports();
@@ -51,6 +55,12 @@ function StudentDashboard() {
     localStorage.removeItem("user");
 
     navigate("/login");
+  };
+
+  const scrollToReports = () => {
+    document
+      .getElementById("student-reports")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   const totalReports = reports.length;
@@ -118,8 +128,10 @@ function StudentDashboard() {
 
   return (
     <div className="student-dashboard">
+
       {/* SIDEBAR */}
       <aside className="sidebar">
+
         <div className="sidebar-logo">
           <div className="logo-icon">CF</div>
 
@@ -130,9 +142,10 @@ function StudentDashboard() {
         </div>
 
         <nav className="sidebar-nav">
+
           <button
             className="nav-item active"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/student")}
           >
             <span>⌂</span>
             Dashboard
@@ -140,7 +153,7 @@ function StudentDashboard() {
 
           <button
             className="nav-item"
-            onClick={() => navigate("/")}
+            onClick={scrollToReports}
           >
             <span>▣</span>
             Laporan Saya
@@ -153,9 +166,11 @@ function StudentDashboard() {
             <span>＋</span>
             Buat Laporan
           </button>
+
         </nav>
 
         <div className="sidebar-bottom">
+
           <button
             className="nav-item logout-button"
             onClick={handleLogout}
@@ -163,18 +178,25 @@ function StudentDashboard() {
             <span>↪</span>
             Logout
           </button>
+
         </div>
       </aside>
 
+
       {/* MAIN CONTENT */}
       <main className="dashboard-content">
+
         {/* HEADER */}
         <header className="dashboard-header">
+
           <div>
-            <p className="header-label">STUDENT DASHBOARD</p>
+            <p className="header-label">
+              STUDENT DASHBOARD
+            </p>
 
             <h1>
-              Halo, {user?.name?.split(" ")[0] || "Mahasiswa"} 👋
+              Halo,{" "}
+              {user?.name?.split(" ")[0] || "Mahasiswa"} 👋
             </h1>
 
             <p className="header-description">
@@ -183,19 +205,27 @@ function StudentDashboard() {
           </div>
 
           <div className="user-info">
+
             <div className="user-avatar">
               {user?.name?.charAt(0)?.toUpperCase() || "M"}
             </div>
 
             <div className="user-details">
-              <strong>{user?.name || "Mahasiswa"}</strong>
+              <strong>
+                {user?.name || "Mahasiswa"}
+              </strong>
+
               <span>Mahasiswa</span>
             </div>
+
           </div>
+
         </header>
 
-        {/* STATS */}
+
+        {/* STATISTICS */}
         <section className="stats-grid">
+
           <div className="stat-card">
             <div className="stat-icon">📋</div>
 
@@ -204,6 +234,7 @@ function StudentDashboard() {
               <strong>{totalReports}</strong>
             </div>
           </div>
+
 
           <div className="stat-card">
             <div className="stat-icon">⏳</div>
@@ -214,6 +245,7 @@ function StudentDashboard() {
             </div>
           </div>
 
+
           <div className="stat-card">
             <div className="stat-icon">🔧</div>
 
@@ -223,6 +255,7 @@ function StudentDashboard() {
             </div>
           </div>
 
+
           <div className="stat-card">
             <div className="stat-icon">✓</div>
 
@@ -231,16 +264,28 @@ function StudentDashboard() {
               <strong>{completedReports}</strong>
             </div>
           </div>
+
         </section>
 
+
         {/* REPORT SECTION */}
-        <section className="dashboard-section">
+        <section
+          className="dashboard-section"
+          id="student-reports"
+        >
+
           <div className="section-header">
+
             <div>
-              <h2>Laporan Terbaru</h2>
+              <p className="section-label">
+                AKTIVITAS LAPORAN
+              </p>
+
+              <h2>Laporan Saya</h2>
 
               <p>
-                Pantau perkembangan laporan fasilitas yang kamu buat.
+                Pantau perkembangan laporan fasilitas
+                yang kamu buat.
               </p>
             </div>
 
@@ -250,25 +295,34 @@ function StudentDashboard() {
             >
               ＋ Buat Laporan
             </button>
+
           </div>
+
 
           {/* LOADING */}
           {loadingReports && (
             <div className="empty-state">
+
               <div className="loading-spinner"></div>
 
               <h3>Memuat laporan...</h3>
 
               <p>
-                Tunggu sebentar, kami sedang mengambil data laporan.
+                Tunggu sebentar, kami sedang mengambil
+                data laporan.
               </p>
+
             </div>
           )}
+
 
           {/* ERROR */}
           {!loadingReports && error && (
             <div className="empty-state error-state">
-              <div className="empty-icon">⚠️</div>
+
+              <div className="empty-icon">
+                ⚠️
+              </div>
 
               <h3>Gagal memuat laporan</h3>
 
@@ -280,44 +334,59 @@ function StudentDashboard() {
               >
                 Coba Lagi
               </button>
+
             </div>
           )}
+
 
           {/* EMPTY */}
           {!loadingReports &&
             !error &&
             reports.length === 0 && (
               <div className="empty-state">
-                <div className="empty-icon">📋</div>
+
+                <div className="empty-icon">
+                  📋
+                </div>
 
                 <h3>Belum ada laporan</h3>
 
                 <p>
-                  Kamu belum membuat laporan kerusakan fasilitas
-                  kampus.
+                  Kamu belum membuat laporan kerusakan
+                  fasilitas kampus.
                 </p>
 
                 <button
                   className="primary-button"
-                  onClick={() => navigate("/reports/create")}
+                  onClick={() =>
+                    navigate("/reports/create")
+                  }
                 >
                   Buat Laporan Pertama
                 </button>
+
               </div>
             )}
+
 
           {/* REPORT LIST */}
           {!loadingReports &&
             !error &&
             reports.length > 0 && (
+
               <div className="reports-list">
+
                 {reports.slice(0, 5).map((report) => (
+
                   <div
                     className="report-card"
                     key={report.id}
                   >
+
                     <div className="report-main">
+
                       <div className="report-top">
+
                         <span className="report-id">
                           LAPORAN #{report.id}
                         </span>
@@ -329,15 +398,22 @@ function StudentDashboard() {
                         >
                           {getStatusLabel(report.status)}
                         </span>
+
                       </div>
 
-                      <h3>{report.title}</h3>
+
+                      <h3>
+                        {report.title}
+                      </h3>
+
 
                       <p className="report-description">
                         {report.description}
                       </p>
 
+
                       <div className="report-meta">
+
                         <span>
                           📍{" "}
                           {report.facility?.name ||
@@ -354,26 +430,40 @@ function StudentDashboard() {
                               report.priority
                             )}`}
                           >
-                            {getPriorityLabel(report.priority)}
+                            {getPriorityLabel(
+                              report.priority
+                            )}
                           </span>
                         )}
+
                       </div>
+
                     </div>
+
 
                     <button
                       className="detail-button"
                       onClick={() =>
-                        navigate(`/reports/${report.id}`)
+                        navigate(
+                          `/reports/${report.id}`
+                        )
                       }
                     >
                       Lihat Detail →
                     </button>
+
                   </div>
+
                 ))}
+
               </div>
+
             )}
+
         </section>
+
       </main>
+
     </div>
   );
 }
