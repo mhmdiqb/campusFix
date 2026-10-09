@@ -1,3 +1,22 @@
+# Dependencies
 node_modules/
+
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
+
+# Build output
+dist/
+dist-ssr/
+
+# Uploaded files generated at runtime
 uploads/
+
+# Logs
+*.log
+
+# Local editor files
+.vscode/
+.idea/
+.DS_Store
