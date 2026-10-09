@@ -1,0 +1,408 @@
+.td-style-1 {
+  min-height: 100vh;
+  background: #f5f7fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.td-style-2 {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #172033;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.td-style-3 {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.td-style-4 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  gap: 20px;
+}
+
+.td-style-5 {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.td-style-6 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.td-style-7 {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.td-style-8 {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.td-style-9 {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 14px 18px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+}
+
+.td-style-10 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.td-style-11 {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.td-style-12 {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #dbeafe;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.td-style-13 {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.td-style-14 {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.td-style-15 {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.td-style-16 {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #fef3c7;
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+}
+
+.td-style-17 {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.td-style-18 {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.td-style-19 {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.td-style-20 {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #ede9fe;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+}
+
+.td-style-21 {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.td-style-22 {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.td-style-23 {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.td-style-24 {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #dcfce7;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.td-style-25 {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.td-style-26 {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.td-style-27 {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.td-style-28 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.td-style-29 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.td-style-30 {
+  margin-top: 7px;
+  margin-bottom: 0;
+  color: #64748b;
+}
+
+.td-style-31 {
+  border: none;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 11px 18px;
+  border-radius: 9px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.td-style-32 {
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 50px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.td-style-33 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.td-style-34 {
+  margin: 0 0 8px;
+  color: #172033;
+}
+
+.td-style-35 {
+  margin: 0;
+}
+
+.td-style-36 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.td-style-37 {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 24px;
+  background: #ffffff;
+}
+
+.td-style-38 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.td-style-39 {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.td-style-40 {
+  margin: 0;
+  font-size: 22px;
+  color: #172033;
+}
+
+.td-style-41 {
+  margin-top: 8px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.td-style-42 {
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 20px 0;
+}
+
+.td-style-43 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.td-style-44 {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.td-style-45 {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.td-style-46 {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.td-style-47 {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.td-style-48 {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.td-style-49 {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.td-style-50 {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #172033;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+
+.technician-status-badge {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #dbeafe;
+  color: #2563eb;
+}
+.technician-status-badge.in_progress { background: #ede9fe; color: #7c3aed; }
+.technician-status-badge.completed { background: #dcfce7; color: #15803d; }
+.technician-status-badge.assigned { background: #dbeafe; color: #2563eb; }
+
+@media (max-width: 1000px) {
+  .td-style-10 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .td-style-36 { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .td-style-2 { padding: 20px; }
+  .td-style-10 { grid-template-columns: 1fr; }
+  .td-style-36 { grid-template-columns: 1fr; }
+  .td-style-43 { grid-template-columns: 1fr; }
+  .td-style-4 { align-items: flex-start; }
+}
+
+
+
+.technician-dashboard { width: 100%; }
+.technician-dashboard h1, .technician-dashboard h2, .technician-dashboard h3 { color: #172033; }
+.technician-dashboard button:hover { filter: brightness(0.97); }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminSidebar from "./AdminSidebar";
+import "./AdminReports.css";
 
 function AdminReports() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function AdminReports() {
   // =========================
   // FETCH DATA
   // =========================
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -66,10 +68,8 @@ function AdminReports() {
   // =========================
   // ASSIGN TECHNICIAN
   // =========================
-  const handleAssignTechnician = async (
-    reportId,
-    technicianId
-  ) => {
+
+  const handleAssignTechnician = async (reportId, technicianId) => {
     if (!technicianId) {
       return;
     }
@@ -105,10 +105,8 @@ function AdminReports() {
   // =========================
   // UPDATE STATUS
   // =========================
-  const handleStatusChange = async (
-    reportId,
-    status
-  ) => {
+
+  const handleStatusChange = async (reportId, status) => {
     try {
       const token = localStorage.getItem("token");
 
@@ -138,6 +136,7 @@ function AdminReports() {
   // =========================
   // STATUS LABEL
   // =========================
+
   const getStatusLabel = (status) => {
     const labels = {
       REPORTED: "Baru",
@@ -155,6 +154,7 @@ function AdminReports() {
   // =========================
   // PRIORITY LABEL
   // =========================
+
   const getPriorityLabel = (priority) => {
     const labels = {
       LOW: "Rendah",
@@ -169,6 +169,7 @@ function AdminReports() {
   // =========================
   // LOADING
   // =========================
+
   if (loading) {
     return (
       <div
@@ -188,8 +189,10 @@ function AdminReports() {
   // =========================
   // MAIN RETURN
   // =========================
+
   return (
     <div
+      className="admin-reports-page"
       style={{
         minHeight: "100vh",
         display: "flex",
@@ -200,11 +203,13 @@ function AdminReports() {
       {/* =========================
           SIDEBAR
       ========================= */}
+
       <AdminSidebar />
 
       {/* =========================
           CONTENT
       ========================= */}
+
       <main
         style={{
           flex: 1,
@@ -222,6 +227,7 @@ function AdminReports() {
           {/* =========================
               HEADER
           ========================= */}
+
           <div
             style={{
               display: "flex",
@@ -262,6 +268,7 @@ function AdminReports() {
             </div>
 
             {/* ADMIN AVATAR */}
+
             <div
               style={{
                 width: "52px",
@@ -283,6 +290,7 @@ function AdminReports() {
           {/* =========================
               ERROR
           ========================= */}
+
           {error && (
             <div
               style={{
@@ -300,6 +308,7 @@ function AdminReports() {
           {/* =========================
               REPORT COUNT
           ========================= */}
+
           <div
             style={{
               background: "white",
@@ -358,6 +367,7 @@ function AdminReports() {
           {/* =========================
               EMPTY STATE
           ========================= */}
+
           {reports.length === 0 ? (
             <div
               style={{
@@ -391,6 +401,7 @@ function AdminReports() {
             /* =========================
                REPORT LIST
             ========================= */
+
             <div
               style={{
                 display: "grid",
@@ -412,6 +423,7 @@ function AdminReports() {
                   }}
                 >
                   {/* REPORT TOP */}
+
                   <div
                     style={{
                       display: "flex",
@@ -447,6 +459,7 @@ function AdminReports() {
                   </div>
 
                   {/* TITLE */}
+
                   <h2
                     style={{
                       margin: "0 0 8px",
@@ -457,6 +470,7 @@ function AdminReports() {
                   </h2>
 
                   {/* DESCRIPTION */}
+
                   <p
                     style={{
                       color: "#64748b",
@@ -476,6 +490,7 @@ function AdminReports() {
                   />
 
                   {/* REPORT INFO */}
+
                   <div
                     style={{
                       display: "grid",
@@ -572,6 +587,7 @@ function AdminReports() {
                   {/* =========================
                       ASSIGN TECHNICIAN
                   ========================= */}
+
                   <label
                     style={{
                       display: "block",
@@ -609,6 +625,7 @@ function AdminReports() {
                   {/* =========================
                       UPDATE STATUS
                   ========================= */}
+
                   <label
                     style={{
                       display: "block",
@@ -640,7 +657,10 @@ function AdminReports() {
                     ))}
                   </select>
 
-                  {/* DETAIL BUTTON */}
+                  {/* =========================
+                      DETAIL BUTTON
+                  ========================= */}
+
                   <button
                     onClick={() =>
                       navigate(`/reports/${report.id}`)
@@ -680,3 +700,4 @@ const selectStyle = {
 };
 
 export default AdminReports;
+

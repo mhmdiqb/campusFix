@@ -1,0 +1,164 @@
+/* ================================
+   ADMIN REPORTS PAGE
+================================ */
+
+.admin-reports-page {
+  color: #172033;
+  background: #f5f7fb;
+}
+
+/* Pastikan semua teks utama terlihat */
+.admin-reports-page h1,
+.admin-reports-page h2,
+.admin-reports-page h3,
+.admin-reports-page h4,
+.admin-reports-page strong,
+.admin-reports-page label {
+  color: #172033;
+}
+
+/* Paragraph */
+.admin-reports-page p {
+  color: #475569;
+}
+
+/* Small text */
+.admin-reports-page small {
+  color: #64748b;
+}
+
+/* ================================
+   REPORT CARD
+================================ */
+
+.admin-reports-page .report-card {
+  color: #172033;
+}
+
+/* ================================
+   SELECT
+================================ */
+
+.admin-reports-page select {
+  color: #172033 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db;
+}
+
+.admin-reports-page select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Option di dalam select */
+.admin-reports-page select option {
+  color: #172033 !important;
+  background-color: #ffffff !important;
+}
+
+/* Placeholder teknisi */
+.admin-reports-page select option:first-child {
+  color: #64748b;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.admin-reports-page h1 {
+  color: #172033 !important;
+}
+
+.admin-reports-page .admin-subtitle {
+  color: #64748b !important;
+}
+
+/* ================================
+   REPORT TITLE
+================================ */
+
+.admin-reports-page h2 {
+  color: #172033 !important;
+}
+
+/* ================================
+   REPORT DESCRIPTION
+================================ */
+
+.admin-reports-page p {
+  color: #475569 !important;
+}
+
+/* ================================
+   LABEL
+================================ */
+
+.admin-reports-page label {
+  color: #172033 !important;
+}
+
+/* ================================
+   STRONG / DATA
+================================ */
+
+.admin-reports-page strong {
+  color: #172033 !important;
+}
+
+/* ================================
+   STATUS
+================================ */
+
+.admin-reports-page .status {
+  color: #2563eb;
+}
+
+/* ================================
+   ERROR
+================================ */
+
+.admin-reports-page .error {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+/* ================================
+   BUTTON
+================================ */
+
+.admin-reports-page button {
+  font-family: inherit;
+}
+
+/* ================================
+   DETAIL BUTTON
+================================ */
+
+.admin-reports-page button:hover {
+  opacity: 0.92;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+  .admin-reports-page main {
+    padding: 25px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-reports-page main {
+    padding: 20px !important;
+  }
+
+  .admin-reports-page h1 {
+    font-size: 28px !important;
+  }
+
+  .admin-reports-page > div {
+    width: 100%;
+  }
+}

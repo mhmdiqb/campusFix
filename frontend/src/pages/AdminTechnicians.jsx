@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AdminSidebar from "./AdminSidebar";
+import "./AdminTechnicians.css";
 
 function AdminTechnicians() {
   const [technicians, setTechnicians] = useState([]);
@@ -40,544 +41,226 @@ function AdminTechnicians() {
     fetchTechnicians();
   }, []);
 
+  const totalTasks = technicians.reduce(
+    (total, technician) =>
+      total + (technician._count?.assignments || 0),
+    0
+  );
+
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#f5f7fb",
-        }}
-      >
+      <div className="technician-loading">
+        <div className="technician-spinner"></div>
         <h2>Loading teknisi...</h2>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        background: "#f5f7fb",
-        color: "#172033",
-      }}
-    >
-      {/* =========================
-          SIDEBAR
-      ========================= */}
+    <div className="technician-page">
+      {/* SIDEBAR */}
       <AdminSidebar />
 
-      {/* =========================
-          CONTENT
-      ========================= */}
-      <main
-        style={{
-          flex: 1,
-          padding: "40px",
-          boxSizing: "border-box",
-          overflowX: "hidden",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          {/* =========================
-              HEADER
-          ========================= */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "35px",
-            }}
-          >
+      {/* CONTENT */}
+      <main className="technician-content">
+        <div className="technician-container">
+
+          {/* HEADER */}
+          <header className="technician-header">
             <div>
-              <div
-                style={{
-                  color: "#2563eb",
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  letterSpacing: "1px",
-                }}
-              >
+              <span className="technician-portal-label">
                 ADMIN PORTAL
-              </div>
+              </span>
 
-              <h1
-                style={{
-                  margin: "8px 0",
-                  fontSize: "34px",
-                }}
-              >
-                Daftar Teknisi
-              </h1>
+              <h1>Daftar Teknisi</h1>
 
-              <p
-                style={{
-                  color: "#64748b",
-                  margin: 0,
-                }}
-              >
+              <p>
                 Kelola teknisi yang menangani laporan fasilitas kampus.
               </p>
             </div>
 
-            {/* ADMIN AVATAR */}
-            <div
-              style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "50%",
-                background: "#2563eb",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "700",
-                fontSize: "20px",
-              }}
-            >
+            <div className="technician-avatar">
               A
             </div>
-          </div>
+          </header>
 
-          {/* =========================
-              ERROR
-          ========================= */}
+          {/* ERROR */}
           {error && (
-            <div
-              style={{
-                background: "#fee2e2",
-                color: "#b91c1c",
-                padding: "15px",
-                borderRadius: "10px",
-                marginBottom: "20px",
-              }}
-            >
+            <div className="technician-error">
               {error}
             </div>
           )}
 
-          {/* =========================
-              SUMMARY
-          ========================= */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "18px",
-              marginBottom: "25px",
-            }}
-          >
+          {/* SUMMARY */}
+          <section className="technician-summary">
+
             {/* TOTAL TEKNISI */}
-            <div style={summaryCardStyle}>
-              <div
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "10px",
-                  background: "#eff6ff",
-                  color: "#2563eb",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "20px",
-                  marginBottom: "15px",
-                }}
-              >
+            <div className="technician-summary-card">
+              <div className="summary-icon blue">
                 👨‍🔧
               </div>
 
-              <span
-                style={{
-                  display: "block",
-                  color: "#64748b",
-                  fontSize: "14px",
-                  marginBottom: "5px",
-                }}
-              >
-                Total Teknisi
-              </span>
+              <span>Total Teknisi</span>
 
-              <strong
-                style={{
-                  fontSize: "28px",
-                }}
-              >
+              <strong>
                 {technicians.length}
               </strong>
             </div>
 
             {/* TOTAL TUGAS */}
-            <div style={summaryCardStyle}>
-              <div
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "10px",
-                  background: "#f3e8ff",
-                  color: "#7c3aed",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "20px",
-                  marginBottom: "15px",
-                }}
-              >
+            <div className="technician-summary-card">
+              <div className="summary-icon purple">
                 🔧
               </div>
 
-              <span
-                style={{
-                  display: "block",
-                  color: "#64748b",
-                  fontSize: "14px",
-                  marginBottom: "5px",
-                }}
-              >
-                Total Tugas
-              </span>
+              <span>Total Tugas</span>
 
-              <strong
-                style={{
-                  fontSize: "28px",
-                }}
-              >
-                {technicians.reduce(
-                  (total, technician) =>
-                    total +
-                    (technician._count?.assignments || 0),
-                  0
-                )}
+              <strong>
+                {totalTasks}
               </strong>
             </div>
 
             {/* STATUS */}
-            <div style={summaryCardStyle}>
-              <div
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "10px",
-                  background: "#dcfce7",
-                  color: "#16a34a",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "20px",
-                  marginBottom: "15px",
-                }}
-              >
+            <div className="technician-summary-card">
+              <div className="summary-icon green">
                 ✓
               </div>
 
-              <span
-                style={{
-                  display: "block",
-                  color: "#64748b",
-                  fontSize: "14px",
-                  marginBottom: "5px",
-                }}
-              >
-                Status
-              </span>
+              <span>Status</span>
 
-              <strong
-                style={{
-                  fontSize: "28px",
-                }}
-              >
+              <strong>
                 Aktif
               </strong>
             </div>
-          </div>
 
-          {/* =========================
-              TECHNICIAN SECTION
-          ========================= */}
-          <section
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "16px",
-              padding: "28px",
-              boxShadow:
-                "0 2px 8px rgba(15, 23, 42, 0.04)",
-            }}
-          >
+          </section>
+
+          {/* TECHNICIAN SECTION */}
+          <section className="technician-section">
+
             {/* SECTION HEADER */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "25px",
-              }}
-            >
+            <div className="technician-section-header">
+
               <div>
-                <span
-                  style={{
-                    color: "#2563eb",
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    letterSpacing: "1px",
-                  }}
-                >
+                <span className="technician-section-label">
                   TECHNICIANS
                 </span>
 
-                <h2
-                  style={{
-                    margin: "6px 0",
-                    fontSize: "24px",
-                  }}
-                >
-                  Teknisi Kampus
-                </h2>
+                <h2>Teknisi Kampus</h2>
 
-                <p
-                  style={{
-                    color: "#64748b",
-                    margin: 0,
-                  }}
-                >
+                <p>
                   Daftar teknisi yang tersedia untuk menangani laporan.
                 </p>
               </div>
 
               <button
+                className="technician-refresh"
                 onClick={fetchTechnicians}
-                style={{
-                  border: "none",
-                  background: "#eff6ff",
-                  color: "#2563eb",
-                  padding: "11px 18px",
-                  borderRadius: "9px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                }}
               >
                 ↻ Refresh
               </button>
+
             </div>
 
-            {/* =========================
-                EMPTY STATE
-            ========================= */}
+            {/* EMPTY STATE */}
             {technicians.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 20px",
-                  border: "1px dashed #cbd5e1",
-                  borderRadius: "12px",
-                  color: "#64748b",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "45px",
-                    marginBottom: "10px",
-                  }}
-                >
+              <div className="technician-empty">
+
+                <div className="empty-icon">
                   👨‍🔧
                 </div>
 
-                <h3
-                  style={{
-                    color: "#172033",
-                    marginBottom: "8px",
-                  }}
-                >
+                <h3>
                   Belum ada teknisi
                 </h3>
 
-                <p
-                  style={{
-                    margin: 0,
-                  }}
-                >
+                <p>
                   Belum ada akun teknisi yang tersedia.
                 </p>
+
               </div>
             ) : (
-              /* =========================
-                 TECHNICIAN LIST
-              ========================= */
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "repeat(auto-fit, minmax(320px, 1fr))",
-                  gap: "18px",
-                }}
-              >
+
+              /* TECHNICIAN LIST */
+              <div className="technician-grid">
+
                 {technicians.map((technician) => (
                   <div
+                    className="technician-card"
                     key={technician.id}
-                    style={{
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "22px",
-                      transition: "0.2s",
-                    }}
                   >
+
                     {/* TECHNICIAN HEADER */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "15px",
-                        marginBottom: "18px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "52px",
-                          height: "52px",
-                          borderRadius: "50%",
-                          background: "#dbeafe",
-                          color: "#2563eb",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "20px",
-                          fontWeight: "700",
-                          flexShrink: 0,
-                        }}
-                      >
+                    <div className="technician-card-header">
+
+                      <div className="technician-initial">
                         {technician.name
                           ?.charAt(0)
                           ?.toUpperCase() || "T"}
                       </div>
 
-                      <div
-                        style={{
-                          minWidth: 0,
-                        }}
-                      >
-                        <h3
-                          style={{
-                            margin: 0,
-                            fontSize: "20px",
-                          }}
-                        >
+                      <div className="technician-identity">
+
+                        <h3>
                           {technician.name}
                         </h3>
 
-                        <span
-                          style={{
-                            color: "#64748b",
-                            fontSize: "14px",
-                            wordBreak: "break-word",
-                          }}
-                        >
+                        <span>
                           {technician.email}
                         </span>
+
                       </div>
+
                     </div>
 
                     {/* TECHNICIAN INFO */}
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: "15px",
-                      }}
-                    >
+                    <div className="technician-info">
+
                       {/* ID */}
-                      <div
-                        style={{
-                          background: "#f8fafc",
-                          padding: "14px",
-                          borderRadius: "10px",
-                        }}
-                      >
-                        <small
-                          style={{
-                            color: "#64748b",
-                          }}
-                        >
+                      <div className="technician-info-box">
+
+                        <small>
                           ID Teknisi
                         </small>
 
-                        <strong
-                          style={{
-                            display: "block",
-                            marginTop: "4px",
-                          }}
-                        >
+                        <strong>
                           #{technician.id}
                         </strong>
+
                       </div>
 
                       {/* TUGAS */}
-                      <div
-                        style={{
-                          background: "#f8fafc",
-                          padding: "14px",
-                          borderRadius: "10px",
-                        }}
-                      >
-                        <small
-                          style={{
-                            color: "#64748b",
-                          }}
-                        >
+                      <div className="technician-info-box">
+
+                        <small>
                           Tugas
                         </small>
 
-                        <strong
-                          style={{
-                            display: "block",
-                            marginTop: "4px",
-                          }}
-                        >
+                        <strong>
                           {technician._count?.assignments || 0}
                         </strong>
+
                       </div>
+
                     </div>
 
                     {/* STATUS */}
-                    <div
-                      style={{
-                        marginTop: "18px",
-                        padding: "10px 14px",
-                        background: "#dcfce7",
-                        color: "#15803d",
-                        borderRadius: "8px",
-                        textAlign: "center",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                      }}
-                    >
+                    <div className="technician-status">
                       ● Teknisi Terdaftar
                     </div>
+
                   </div>
                 ))}
+
               </div>
             )}
+
           </section>
+
         </div>
       </main>
     </div>
   );
 }
-
-const summaryCardStyle = {
-  background: "white",
-  border: "1px solid #e5e7eb",
-  borderRadius: "14px",
-  padding: "22px",
-  boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)",
-};
 
 export default AdminTechnicians;

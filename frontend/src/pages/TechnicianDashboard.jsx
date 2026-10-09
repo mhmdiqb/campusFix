@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "./TechnicianDashboard.css";
 
 function TechnicianDashboard() {
   const [assignments, setAssignments] = useState([]);
@@ -107,38 +108,11 @@ function TechnicianDashboard() {
     return labels[priority] || priority || "-";
   };
 
-  const getStatusStyle = (status) => {
-    if (status === "COMPLETED") {
-      return {
-        background: "#dcfce7",
-        color: "#15803d",
-      };
-    }
-
-    if (status === "IN_PROGRESS") {
-      return {
-        background: "#ede9fe",
-        color: "#7c3aed",
-      };
-    }
-
-    return {
-      background: "#dbeafe",
-      color: "#2563eb",
-    };
-  };
 
   if (loading) {
     return (
       <div
-        style={{
-          minHeight: "100vh",
-          background: "#f5f7fb",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#64748b",
-        }}
+        className="td-style-1"
       >
         <h2>Loading technician dashboard...</h2>
       </div>
@@ -147,78 +121,37 @@ function TechnicianDashboard() {
 
   return (
     <div
-      style={{
-        minHeight: "100vh",
-        background: "#f5f7fb",
-        color: "#172033",
-        padding: "40px",
-        boxSizing: "border-box",
-      }}
+      className="technician-dashboard td-style-2"
     >
       {/* HEADER */}
       <div
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-        }}
+        className="td-style-3"
       >
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "35px",
-            gap: "20px",
-          }}
+          className="td-style-4"
         >
           <div>
             <div
-              style={{
-                color: "#2563eb",
-                fontSize: "13px",
-                fontWeight: "700",
-                letterSpacing: "1px",
-                marginBottom: "8px",
-              }}
+              className="td-style-5"
             >
               TECHNICIAN PORTAL
             </div>
 
             <h1
-              style={{
-                margin: 0,
-                fontSize: "34px",
-                fontWeight: "700",
-              }}
+              className="td-style-6"
             >
               Technician Dashboard
             </h1>
 
             <p
-              style={{
-                marginTop: "8px",
-                marginBottom: 0,
-                color: "#64748b",
-                fontSize: "16px",
-              }}
+              className="td-style-7"
             >
               Kelola laporan fasilitas yang ditugaskan kepada kamu.
             </p>
           </div>
 
           <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "50%",
-              background: "#2563eb",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "20px",
-              fontWeight: "700",
-            }}
+            className="td-style-8"
           >
             T
           </div>
@@ -227,14 +160,7 @@ function TechnicianDashboard() {
         {/* ERROR */}
         {error && (
           <div
-            style={{
-              background: "#fee2e2",
-              color: "#b91c1c",
-              padding: "14px 18px",
-              marginBottom: "25px",
-              borderRadius: "10px",
-              border: "1px solid #fecaca",
-            }}
+            className="td-style-9"
           >
             {error}
           </div>
@@ -242,58 +168,27 @@ function TechnicianDashboard() {
 
         {/* STATISTICS */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "18px",
-            marginBottom: "30px",
-          }}
+          className="td-style-10"
         >
           {/* TOTAL */}
           <div
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "14px",
-              padding: "22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
-            }}
+            className="td-style-11"
           >
             <div
-              style={{
-                width: "46px",
-                height: "46px",
-                borderRadius: "12px",
-                background: "#dbeafe",
-                color: "#2563eb",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "22px",
-              }}
+              className="td-style-12"
             >
               ☷
             </div>
 
             <div>
               <span
-                style={{
-                  color: "#64748b",
-                  fontSize: "14px",
-                }}
+                className="td-style-13"
               >
                 Total Tugas
               </span>
 
               <strong
-                style={{
-                  display: "block",
-                  fontSize: "28px",
-                  marginTop: "4px",
-                }}
+                className="td-style-14"
               >
                 {totalAssignments}
               </strong>
@@ -302,49 +197,23 @@ function TechnicianDashboard() {
 
           {/* ASSIGNED */}
           <div
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "14px",
-              padding: "22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
-            }}
+            className="td-style-15"
           >
             <div
-              style={{
-                width: "46px",
-                height: "46px",
-                borderRadius: "12px",
-                background: "#fef3c7",
-                color: "#d97706",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "21px",
-              }}
+              className="td-style-16"
             >
               ◷
             </div>
 
             <div>
               <span
-                style={{
-                  color: "#64748b",
-                  fontSize: "14px",
-                }}
+                className="td-style-17"
               >
                 Ditugaskan
               </span>
 
               <strong
-                style={{
-                  display: "block",
-                  fontSize: "28px",
-                  marginTop: "4px",
-                }}
+                className="td-style-18"
               >
                 {assignedCount}
               </strong>
@@ -353,49 +222,23 @@ function TechnicianDashboard() {
 
           {/* IN PROGRESS */}
           <div
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "14px",
-              padding: "22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
-            }}
+            className="td-style-19"
           >
             <div
-              style={{
-                width: "46px",
-                height: "46px",
-                borderRadius: "12px",
-                background: "#ede9fe",
-                color: "#7c3aed",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "21px",
-              }}
+              className="td-style-20"
             >
               ⚙
             </div>
 
             <div>
               <span
-                style={{
-                  color: "#64748b",
-                  fontSize: "14px",
-                }}
+                className="td-style-21"
               >
                 Dikerjakan
               </span>
 
               <strong
-                style={{
-                  display: "block",
-                  fontSize: "28px",
-                  marginTop: "4px",
-                }}
+                className="td-style-22"
               >
                 {inProgressCount}
               </strong>
@@ -404,49 +247,23 @@ function TechnicianDashboard() {
 
           {/* COMPLETED */}
           <div
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "14px",
-              padding: "22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
-            }}
+            className="td-style-23"
           >
             <div
-              style={{
-                width: "46px",
-                height: "46px",
-                borderRadius: "12px",
-                background: "#dcfce7",
-                color: "#16a34a",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "22px",
-              }}
+              className="td-style-24"
             >
               ✓
             </div>
 
             <div>
               <span
-                style={{
-                  color: "#64748b",
-                  fontSize: "14px",
-                }}
+                className="td-style-25"
               >
                 Selesai
               </span>
 
               <strong
-                style={{
-                  display: "block",
-                  fontSize: "28px",
-                  marginTop: "4px",
-                }}
+                className="td-style-26"
               >
                 {completedCount}
               </strong>
@@ -456,39 +273,21 @@ function TechnicianDashboard() {
 
         {/* SECTION */}
         <div
-          style={{
-            background: "white",
-            border: "1px solid #e5e7eb",
-            borderRadius: "16px",
-            padding: "28px",
-            boxShadow: "0 4px 12px rgba(15, 23, 42, 0.04)",
-          }}
+          className="td-style-27"
         >
           {/* SECTION HEADER */}
           <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "25px",
-            }}
+            className="td-style-28"
           >
             <div>
               <h2
-                style={{
-                  margin: 0,
-                  fontSize: "22px",
-                }}
+                className="td-style-29"
               >
                 Laporan yang Ditugaskan
               </h2>
 
               <p
-                style={{
-                  marginTop: "7px",
-                  marginBottom: 0,
-                  color: "#64748b",
-                }}
+                className="td-style-30"
               >
                 Kelola dan perbarui status laporan fasilitas.
               </p>
@@ -496,15 +295,7 @@ function TechnicianDashboard() {
 
             <button
               onClick={fetchAssignments}
-              style={{
-                border: "none",
-                background: "#eff6ff",
-                color: "#2563eb",
-                padding: "11px 18px",
-                borderRadius: "9px",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
+              className="td-style-31"
             >
               ↻ Refresh Data
             </button>
@@ -513,43 +304,27 @@ function TechnicianDashboard() {
           {/* EMPTY */}
           {assignments.length === 0 ? (
             <div
-              style={{
-                border: "1px dashed #cbd5e1",
-                borderRadius: "12px",
-                padding: "50px 20px",
-                textAlign: "center",
-                color: "#64748b",
-              }}
+              className="td-style-32"
             >
               <div
-                style={{
-                  fontSize: "40px",
-                  marginBottom: "10px",
-                }}
+                className="td-style-33"
               >
                 ✓
               </div>
 
               <h3
-                style={{
-                  margin: "0 0 8px",
-                  color: "#172033",
-                }}
+                className="td-style-34"
               >
                 Belum ada tugas
               </h3>
 
-              <p style={{ margin: 0 }}>
+              <p className="td-style-35">
                 Belum ada laporan yang ditugaskan kepada kamu.
               </p>
             </div>
           ) : (
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "18px",
-              }}
+              className="td-style-36"
             >
               {assignments.map((assignment) => {
                 const report = assignment.report;
@@ -557,42 +332,19 @@ function TechnicianDashboard() {
                 return (
                   <div
                     key={assignment.id}
-                    style={{
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "24px",
-                      background: "#ffffff",
-                    }}
+                    className="td-style-37"
                   >
                     {/* CARD HEADER */}
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "10px",
-                        marginBottom: "18px",
-                      }}
+                      className="td-style-38"
                     >
                       <span
-                        style={{
-                          color: "#64748b",
-                          fontSize: "12px",
-                          fontWeight: "700",
-                          letterSpacing: "1px",
-                        }}
+                        className="td-style-39"
                       >
                         LAPORAN #{report?.id}
                       </span>
 
-                      <span
-                        style={{
-                          ...getStatusStyle(report?.status),
-                          padding: "8px 14px",
-                          borderRadius: "20px",
-                          fontSize: "13px",
-                          fontWeight: "600",
-                        }}
+                      <span className={`technician-status-badge ${report?.status?.toLowerCase() || "assigned"}`}
                       >
                         {getStatusLabel(report?.status)}
                       </span>
@@ -600,50 +352,29 @@ function TechnicianDashboard() {
 
                     {/* TITLE */}
                     <h3
-                      style={{
-                        margin: "0",
-                        fontSize: "22px",
-                        color: "#172033",
-                      }}
+                      className="td-style-40"
                     >
                       {report?.title || "Tanpa judul"}
                     </h3>
 
                     <p
-                      style={{
-                        marginTop: "8px",
-                        color: "#64748b",
-                        lineHeight: "1.6",
-                      }}
+                      className="td-style-41"
                     >
                       {report?.description ||
                         "Tidak ada deskripsi."}
                     </p>
 
                     <hr
-                      style={{
-                        border: 0,
-                        borderTop: "1px solid #e5e7eb",
-                        margin: "20px 0",
-                      }}
+                      className="td-style-42"
                     />
 
                     {/* INFORMATION */}
                     <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: "20px",
-                      }}
+                      className="td-style-43"
                     >
                       <div>
                         <span
-                          style={{
-                            display: "block",
-                            color: "#94a3b8",
-                            fontSize: "12px",
-                            marginBottom: "5px",
-                          }}
+                          className="td-style-44"
                         >
                           Fasilitas
                         </span>
@@ -655,12 +386,7 @@ function TechnicianDashboard() {
 
                       <div>
                         <span
-                          style={{
-                            display: "block",
-                            color: "#94a3b8",
-                            fontSize: "12px",
-                            marginBottom: "5px",
-                          }}
+                          className="td-style-45"
                         >
                           Lokasi
                         </span>
@@ -672,12 +398,7 @@ function TechnicianDashboard() {
 
                       <div>
                         <span
-                          style={{
-                            display: "block",
-                            color: "#94a3b8",
-                            fontSize: "12px",
-                            marginBottom: "5px",
-                          }}
+                          className="td-style-46"
                         >
                           Prioritas
                         </span>
@@ -689,12 +410,7 @@ function TechnicianDashboard() {
 
                       <div>
                         <span
-                          style={{
-                            display: "block",
-                            color: "#94a3b8",
-                            fontSize: "12px",
-                            marginBottom: "5px",
-                          }}
+                          className="td-style-47"
                         >
                           Status
                         </span>
@@ -707,19 +423,10 @@ function TechnicianDashboard() {
 
                     {/* UPDATE STATUS */}
                     <div
-                      style={{
-                        marginTop: "24px",
-                        paddingTop: "20px",
-                        borderTop: "1px solid #e5e7eb",
-                      }}
+                      className="td-style-48"
                     >
                       <label
-                        style={{
-                          display: "block",
-                          fontSize: "13px",
-                          fontWeight: "600",
-                          marginBottom: "8px",
-                        }}
+                        className="td-style-49"
                       >
                         Update Status
                       </label>
@@ -735,16 +442,7 @@ function TechnicianDashboard() {
                             e.target.value = "";
                           }
                         }}
-                        style={{
-                          width: "100%",
-                          padding: "11px 12px",
-                          border: "1px solid #d1d5db",
-                          borderRadius: "8px",
-                          background: "white",
-                          color: "#172033",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                        }}
+                        className="td-style-50"
                       >
                         <option value="">
                           -- Pilih Status --
