@@ -2,8 +2,10 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const uploadDir = path.join(__dirname, "../../uploads");
+// Lokasi folder uploads di root backend
+const uploadDir = path.resolve(__dirname, "../../uploads");
 
+// Buat folder uploads jika belum tersedia
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -49,4 +51,4 @@ const upload = multer({
   },
 });
 
-module.exports = upload;    
+module.exports = upload;
