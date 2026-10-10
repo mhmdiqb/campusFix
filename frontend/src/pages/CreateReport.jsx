@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api";
 
 function CreateReport() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function CreateReport() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `${import.meta.env.VITE_API_URL}/facilities`
         );
 
@@ -73,7 +73,7 @@ function CreateReport() {
         formData.append("image", image);
       }
 
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_API_URL}/reports`,
         formData,
         {
