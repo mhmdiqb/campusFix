@@ -2,13 +2,11 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Lokasi folder uploads di root backend
-const uploadDir = path.resolve(__dirname, "../../uploads");
+// Lokasi folder sementara untuk upload di server
+const uploadDir = "/tmp/campusfix-uploads";
 
-// Buat folder uploads jika belum tersedia
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Buat folder jika belum tersedia
+fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
