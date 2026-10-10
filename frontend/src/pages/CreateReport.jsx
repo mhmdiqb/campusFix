@@ -24,7 +24,7 @@ function CreateReport() {
     const fetchFacilities = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/facilities"
+          `${import.meta.env.VITE_API_URL}/facilities`
         );
 
         setFacilities(response.data.data || []);
@@ -74,7 +74,7 @@ function CreateReport() {
       }
 
       const response = await axios.post(
-        "http://localhost:3000/api/reports",
+        `${import.meta.env.VITE_API_URL}/reports`,
         formData,
         {
           headers: {
