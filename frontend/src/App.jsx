@@ -59,15 +59,17 @@ function App() {
           }
         />
 
-        {/* STUDENT - DETAIL LAPORAN */}
+        
+        {/* DETAIL LAPORAN — STUDENT & ADMIN */}
         <Route
           path="/reports/:id"
           element={
-            <ProtectedRoute allowedRole="STUDENT">
+            <ProtectedRoute>
               <ReportDetail />
             </ProtectedRoute>
           }
         />
+
 
         {/* ADMIN - LAPORAN */}
         <Route
