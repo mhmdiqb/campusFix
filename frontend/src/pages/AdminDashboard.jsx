@@ -498,7 +498,7 @@ function AdminDashboard() {
 
                     <button
                       className="detail-button"
-                      onClick={() => navigate(`/reports/${report.id}`)}
+                      onClick={() => navigate(`/admin/reports/${report.id}`)}
                     >
                       👁 Lihat Detail
                     </button>

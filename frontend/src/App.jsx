@@ -60,15 +60,24 @@ function App() {
         />
 
         
-        {/* DETAIL LAPORAN — STUDENT & ADMIN */}
-        <Route
-          path="/reports/:id"
-          element={
-            <ProtectedRoute>
-              <ReportDetail />
-            </ProtectedRoute>
-          }
-        />
+      {/* DETAIL LAPORAN — STUDENT & ADMIN */}
+      <Route
+        path="/reports/:id"
+        element={
+          <ProtectedRoute>
+            <ReportDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/reports/:id"
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <ReportDetail />
+          </ProtectedRoute>
+        }
+      />
 
 
         {/* ADMIN - LAPORAN */}
