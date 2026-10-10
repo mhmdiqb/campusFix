@@ -33,7 +33,7 @@ function StudentDashboard() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/reports",
+        "https://campusfix.de.deplexo.com/api/reports",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -140,7 +140,7 @@ function StudentDashboard() {
             <span>Student Portal</span>
           </div>
         </div>
-
+    
         <nav className="sidebar-nav">
 
           <button

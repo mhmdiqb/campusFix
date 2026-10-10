@@ -24,7 +24,7 @@ function ReportDetail() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        `http://localhost:3000/api/reports/${id}`,
+        `https://campusfix.de.deplexo.com/api/reports/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ function ReportDetail() {
       const token = localStorage.getItem("token");
 
       await axios.patch(
-        `http://localhost:3000/api/reports/${id}/confirm`,
+        `https://campusfix.de.deplexo.com/api/reports/${id}/confirm`,
         {
         },
         {
@@ -277,7 +277,7 @@ function ReportDetail() {
                 {report.images.map((image) => (
                   <div key={image.id}>
                     <img
-                      src={`http://localhost:3000${image.imageUrl}`}
+                      src={`https://campusfix.de.deplexo.com${image.imageUrl}`}
                       alt="Foto kerusakan"
                       style={{
                         width: "100%",

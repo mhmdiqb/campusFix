@@ -15,7 +15,7 @@ function TechnicianDashboard() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/assignments/my",
+        "https://campusfix.de.deplexo.com/api/assignments/my",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ function TechnicianDashboard() {
       const token = localStorage.getItem("token");
 
       await axios.patch(
-        `http://localhost:3000/api/assignments/${assignmentId}/status`,
+        `https://campusfix.de.deplexo.com/api/assignments/${assignmentId}/status`,
         {
           status,
           note:

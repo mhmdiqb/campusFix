@@ -12,7 +12,7 @@ function AdminDashboard() {
   const [error, setError] = useState("");
 
   const statuses = [
-    "REPORTED",
+    "REPORTED", 
     "VERIFIED",
     "ASSIGNED",
     "IN_PROGRESS",
@@ -26,7 +26,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/assignments/technicians",
+        "https://campusfix.de.deplexo.com/api/assignments/technicians",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/reports",
+        "https://campusfix.de.deplexo.com/api/reports",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:3000/api/assignments/reports/${reportId}`,
+        `https://campusfix.de.deplexo.com/api/assignments/reports/${reportId}`,
         {
           technicianId: Number(technicianId),
         },
@@ -109,7 +109,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       await axios.patch(
-        `http://localhost:3000/api/reports/${reportId}/status`,
+        `https://campusfix.de.deplexo.com/api/reports/${reportId}/status`,
         {
           status,
         },

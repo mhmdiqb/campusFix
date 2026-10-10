@@ -22,7 +22,7 @@ function MyReports() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/reports",
+        "https://campusfix.de.deplexo.com/api/reports",
         {
           headers: {
             Authorization: `Bearer ${token}`,

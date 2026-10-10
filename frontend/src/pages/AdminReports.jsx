@@ -38,11 +38,11 @@ function AdminReports() {
       };
 
       const [reportsResponse, techniciansResponse] = await Promise.all([
-        axios.get("http://localhost:3000/api/reports", {
+        axios.get("https://campusfix.de.deplexo.com/api/reports", {
           headers,
         }),
 
-        axios.get("http://localhost:3000/api/assignments/technicians", {
+        axios.get("https://campusfix.de.deplexo.com/api/assignments/technicians", {
           headers,
         }),
       ]);
@@ -78,7 +78,7 @@ function AdminReports() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:3000/api/assignments/reports/${reportId}`,
+        `https://campusfix.de.deplexo.com/api/assignments/reports/${reportId}`,
         {
           technicianId: Number(technicianId),
         },
@@ -111,7 +111,7 @@ function AdminReports() {
       const token = localStorage.getItem("token");
 
       await axios.patch(
-        `http://localhost:3000/api/reports/${reportId}/status`,
+        `https://campusfix.de.deplexo.com/api/reports/${reportId}/status`,
         {
           status,
         },

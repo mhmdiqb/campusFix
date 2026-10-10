@@ -16,7 +16,7 @@ function AdminTechnicians() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:3000/api/assignments/technicians",
+        "https://campusfix.de.deplexo.com/api/assignments/technicians",
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -134,7 +134,7 @@ File `src/services/api.js` digunakan sebagai bagian dari pengelolaan komunikasi 
 Backend lokal secara default menggunakan alamat:
 
 ```text
-http://localhost:3000
+https://campusfix.de.deplexo.com
 ```
 
 Pastikan alamat API pada konfigurasi frontend sesuai dengan backend yang sedang dijalankan.
@@ -179,7 +179,7 @@ Pastikan konfigurasi pada `src/services/api.js` mengarah ke backend yang benar.
 Alamat backend lokal:
 
 ```text
-http://localhost:3000
+https://campusfix.de.deplexo.com
 ```
 
 Sesuaikan konfigurasi tersebut dengan implementasi `api.js` yang digunakan proyek.
