@@ -32,6 +32,12 @@ app.use(
   facilityCategoryRoutes
 );
 
+const fs = require("fs");
+
+fs.mkdirSync(path.join(__dirname, "../uploads"), {
+  recursive: true,
+});
+
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "../uploads"))
