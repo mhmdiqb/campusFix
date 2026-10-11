@@ -405,8 +405,7 @@ function AdminReports() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(420px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
                 gap: "20px",
               }}
             >
@@ -663,7 +662,7 @@ function AdminReports() {
 
                   <button
                     onClick={() =>
-                      navigate(`/reports/${report.id}`)
+                      navigate(`/admin/reports/${report.id}`)
                     }
                     style={{
                       width: "100%",
