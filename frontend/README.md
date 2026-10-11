@@ -214,7 +214,7 @@ Jangan memasukkan JWT secret atau kredensial database backend ke environment var
 npm run dev
 ```
 
-Vite akan menampilkan alamat lokal di terminal. Biasanya alamatnya:
+Vite akan menampilkan alamat lokal di terminal.alamatnya:
 
 ```text
 http://localhost:5173
@@ -247,15 +247,11 @@ Panitia dapat mengakses aplikasi melalui tautan berikut:
 
 ### Akun Demo
 
-Isi bagian berikut dengan kredensial akun demo yang benar-benar aktif dan telah diuji sebelum README dipublikasikan.
-
 | Role       | Email                                                                               | Password                        |
 | ---------- | ----------------------------------------------------------------------------------- | ------------------------------- |
-| STUDENT    | [mahasiswa@student.unida.gontor.ac.id](mailto:mahasiswa@student.unida.gontor.ac.id) | `[Isi password demo mahasiswa]` |
-| TECHNICIAN | `[Isi email demo teknisi]`                                                          | `[Isi password demo teknisi]`   |
-| ADMIN      | `[Isi email demo admin]`                                                            | `[Isi password demo admin]`     |
-
-**Catatan:** Ganti semua teks di dalam tanda kurung siku dengan kredensial demo yang telah disiapkan. Jangan mencantumkan password pribadi atau kredensial layanan lain. Pastikan setiap akun dapat login dan memiliki role yang sesuai sebelum diberikan kepada panitia.
+| STUDENT    | `[mahasiswa@student.unida.gontor.ac.id]`                                            | `[backend1]`                    |
+| TECHNICIAN | `[teknisi@unida.gontor.ac.id]`                                                      | `[backend1]`                    |
+| ADMIN      | `[adminunida@unida.gontor.ac.id]`                                                   | `[backend1]`                    |
 
 ### Alur Pengujian yang Disarankan
 
