@@ -57,7 +57,6 @@ function Login() {
 
         {/* LEFT SIDE */}
         <div className="login-brand">
-          <div className="brand-logo">CF</div>
 
           <h1>CampusFix</h1>
 
