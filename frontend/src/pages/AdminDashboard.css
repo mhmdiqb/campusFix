@@ -587,3 +587,74 @@ color: #ffffff !important;
 font-weight: 700;
 opacity: 1;
 }
+
+/* ================================
+RESPONSIVE ADMIN SIDEBAR
+================================ */
+
+/* Mencegah sidebar menyusut secara tidak sengaja */
+.admin-sidebar {
+flex-shrink: 0;
+box-sizing: border-box;
+}
+
+/* Memastikan navigasi dapat menyesuaikan lebar */
+.admin-nav {
+min-width: 0;
+}
+
+.admin-nav a {
+box-sizing: border-box;
+max-width: 100%;
+}
+
+/* ================================
+RESPONSIVE MOBILE
+================================ */
+
+@media (max-width: 768px) {
+.admin-sidebar {
+width: 100% !important;
+min-width: 0 !important;
+height: auto !important;
+min-height: auto !important;
+position: relative !important;
+padding: 16px !important;
+box-sizing: border-box;
+}
+
+.admin-logo {
+text-align: center;
+margin-bottom: 16px;
+}
+
+.admin-nav {
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+justify-content: center;
+gap: 8px;
+}
+
+.admin-nav a {
+flex: 1 1 auto;
+width: auto;
+text-align: center;
+padding: 12px 10px;
+white-space: nowrap;
+}
+
+.admin-logout {
+display: block;
+width: 100%;
+margin-top: 12px;
+}
+
+.admin-dashboard,
+.admin-reports-page,
+.admin-technicians-page {
+width: 100%;
+min-width: 0;
+box-sizing: border-box;
+}
+}

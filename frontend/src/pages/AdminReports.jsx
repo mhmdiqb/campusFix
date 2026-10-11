@@ -22,39 +22,33 @@ function AdminReports() {
     "REJECTED",
   ];
 
-  // =========================
-  // FETCH DATA
-  // =========================
+  const getHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  });
 
+  // FETCH DATA
   const fetchData = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
       const [reportsResponse, techniciansResponse] = await Promise.all([
-        axios.get("https://campusfix.de.deplexo.com/api/reports", {
-          headers,
-        }),
-
-        axios.get("https://campusfix.de.deplexo.com/api/assignments/technicians", {
-          headers,
-        }),
+        axios.get(
+          "https://campusfix.de.deplexo.com/api/reports",
+          { headers: getHeaders() }
+        ),
+        axios.get(
+          "https://campusfix.de.deplexo.com/api/assignments/technicians",
+          { headers: getHeaders() }
+        ),
       ]);
 
       setReports(reportsResponse.data.data || []);
       setTechnicians(techniciansResponse.data.data || []);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
-
       setError(
-        err.response?.data?.message ||
-          "Gagal mengambil data laporan."
+        err.response?.data?.message || "Gagal mengambil data laporan."
       );
     } finally {
       setLoading(false);
@@ -65,36 +59,21 @@ function AdminReports() {
     fetchData();
   }, []);
 
-  // =========================
   // ASSIGN TECHNICIAN
-  // =========================
-
   const handleAssignTechnician = async (reportId, technicianId) => {
-    if (!technicianId) {
-      return;
-    }
+    if (!technicianId) return;
 
     try {
-      const token = localStorage.getItem("token");
-
       await axios.post(
         `https://campusfix.de.deplexo.com/api/assignments/reports/${reportId}`,
-        {
-          technicianId: Number(technicianId),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { technicianId: Number(technicianId) },
+        { headers: getHeaders() }
       );
 
       alert("Laporan berhasil ditugaskan ke teknisi.");
-
-      fetchData();
+      await fetchData();
     } catch (err) {
       console.error("Gagal assign teknisi:", err);
-
       alert(
         err.response?.data?.message ||
           "Gagal menugaskan laporan ke teknisi."
@@ -102,30 +81,18 @@ function AdminReports() {
     }
   };
 
-  // =========================
   // UPDATE STATUS
-  // =========================
-
   const handleStatusChange = async (reportId, status) => {
     try {
-      const token = localStorage.getItem("token");
-
       await axios.patch(
         `https://campusfix.de.deplexo.com/api/reports/${reportId}/status`,
-        {
-          status,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { status },
+        { headers: getHeaders() }
       );
 
-      fetchData();
+      await fetchData();
     } catch (err) {
       console.error("Gagal mengubah status:", err);
-
       alert(
         err.response?.data?.message ||
           "Gagal mengubah status laporan."
@@ -133,10 +100,7 @@ function AdminReports() {
     }
   };
 
-  // =========================
   // STATUS LABEL
-  // =========================
-
   const getStatusLabel = (status) => {
     const labels = {
       REPORTED: "Baru",
@@ -151,10 +115,7 @@ function AdminReports() {
     return labels[status] || status;
   };
 
-  // =========================
   // PRIORITY LABEL
-  // =========================
-
   const getPriorityLabel = (priority) => {
     const labels = {
       LOW: "Rendah",
@@ -166,438 +127,125 @@ function AdminReports() {
     return labels[priority] || priority || "-";
   };
 
-  // =========================
   // LOADING
-  // =========================
-
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#f5f7fb",
-        }}
-      >
+      <div className="admin-reports-loading">
         <h2>Loading laporan...</h2>
       </div>
     );
   }
 
-  // =========================
-  // MAIN RETURN
-  // =========================
-
   return (
-    <div
-      className="admin-reports-page"
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        background: "#f5f7fb",
-        color: "#172033",
-      }}
-    >
-      {/* =========================
-          SIDEBAR
-      ========================= */}
-
+    <div className="admin-reports-page">
       <AdminSidebar />
 
-      {/* =========================
-          CONTENT
-      ========================= */}
-
-      <main
-        style={{
-          flex: 1,
-          padding: "40px",
-          boxSizing: "border-box",
-          overflowX: "hidden",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          {/* =========================
-              HEADER
-          ========================= */}
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "35px",
-            }}
-          >
+      <main className="admin-reports-main">
+        <div className="admin-reports-container">
+          {/* HEADER */}
+          <header className="admin-reports-header">
             <div>
-              <div
-                style={{
-                  color: "#2563eb",
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  letterSpacing: "1px",
-                }}
-              >
-                ADMIN PORTAL
-              </div>
-
-              <h1
-                style={{
-                  margin: "8px 0",
-                  fontSize: "34px",
-                }}
-              >
-                Daftar Laporan
-              </h1>
-
-              <p
-                style={{
-                  color: "#64748b",
-                  margin: 0,
-                }}
-              >
+              <div className="admin-label">ADMIN PORTAL</div>
+              <h1>Daftar Laporan</h1>
+              <p className="admin-subtitle">
                 Kelola laporan kerusakan fasilitas kampus.
               </p>
             </div>
 
-            {/* ADMIN AVATAR */}
+            <div className="admin-avatar">A</div>
+          </header>
 
-            <div
-              style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "50%",
-                background: "#2563eb",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "700",
-                fontSize: "20px",
-              }}
-            >
-              A
+          {/* ERROR */}
+          {error && <div className="admin-error">{error}</div>}
+
+          {/* REPORT COUNT */}
+          <section className="report-count-card">
+            <div>
+              <span className="report-count-label">Total Laporan</span>
+              <strong className="report-count-number">
+                {reports.length}
+              </strong>
             </div>
-          </div>
 
-          {/* =========================
-              ERROR
-          ========================= */}
-
-          {error && (
-            <div
-              style={{
-                background: "#fee2e2",
-                color: "#b91c1c",
-                padding: "15px",
-                borderRadius: "10px",
-                marginBottom: "20px",
-              }}
+            <button
+              type="button"
+              className="refresh-button"
+              onClick={fetchData}
             >
-              {error}
-            </div>
-          )}
+              ↻ Refresh Data
+            </button>
+          </section>
 
-          {/* =========================
-              REPORT COUNT
-          ========================= */}
-
-          <div
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "14px",
-              padding: "25px",
-              marginBottom: "25px",
-              boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    display: "block",
-                    color: "#64748b",
-                    fontSize: "14px",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Total Laporan
-                </span>
-
-                <strong
-                  style={{
-                    fontSize: "28px",
-                  }}
-                >
-                  {reports.length}
-                </strong>
-              </div>
-
-              <button
-                onClick={fetchData}
-                style={{
-                  border: "none",
-                  background: "#eff6ff",
-                  color: "#2563eb",
-                  padding: "11px 18px",
-                  borderRadius: "9px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                }}
-              >
-                ↻ Refresh Data
-              </button>
-            </div>
-          </div>
-
-          {/* =========================
-              EMPTY STATE
-          ========================= */}
-
+          {/* EMPTY STATE */}
           {reports.length === 0 ? (
-            <div
-              style={{
-                background: "white",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "60px 20px",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "45px",
-                  marginBottom: "15px",
-                }}
-              >
-                📋
-              </div>
-
+            <section className="reports-empty">
+              <div className="empty-icon">📋</div>
               <h3>Belum ada laporan</h3>
-
-              <p
-                style={{
-                  color: "#64748b",
-                }}
-              >
-                Belum ada laporan fasilitas dari mahasiswa.
-              </p>
-            </div>
+              <p>Belum ada laporan fasilitas dari mahasiswa.</p>
+            </section>
           ) : (
-            /* =========================
-               REPORT LIST
-            ========================= */
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
-                gap: "20px",
-              }}
-            >
+            /* REPORT LIST */
+            <section className="admin-report-grid">
               {reports.map((report) => (
-                <div
-                  key={report.id}
-                  style={{
-                    background: "white",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "14px",
-                    padding: "24px",
-                    boxShadow:
-                      "0 2px 8px rgba(15, 23, 42, 0.04)",
-                  }}
-                >
+                <article className="report-card" key={report.id}>
                   {/* REPORT TOP */}
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: "10px",
-                      marginBottom: "15px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        color: "#64748b",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        letterSpacing: "1px",
-                      }}
-                    >
+                  <div className="report-card-top">
+                    <span className="report-number">
                       LAPORAN #{report.id}
                     </span>
 
-                    <span
-                      style={{
-                        padding: "7px 12px",
-                        borderRadius: "20px",
-                        background: "#eff6ff",
-                        color: "#2563eb",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                      }}
-                    >
+                    <span className="report-status">
                       {getStatusLabel(report.status)}
                     </span>
                   </div>
 
                   {/* TITLE */}
-
-                  <h2
-                    style={{
-                      margin: "0 0 8px",
-                      fontSize: "21px",
-                    }}
-                  >
-                    {report.title}
-                  </h2>
+                  <h2>{report.title}</h2>
 
                   {/* DESCRIPTION */}
-
-                  <p
-                    style={{
-                      color: "#64748b",
-                      lineHeight: "1.6",
-                      marginBottom: "20px",
-                    }}
-                  >
+                  <p className="report-description">
                     {report.description}
                   </p>
 
-                  <hr
-                    style={{
-                      border: 0,
-                      borderTop: "1px solid #e5e7eb",
-                      margin: "20px 0",
-                    }}
-                  />
+                  <hr className="report-divider" />
 
                   {/* REPORT INFO */}
-
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "18px",
-                      marginBottom: "20px",
-                    }}
-                  >
+                  <div className="report-info-grid">
                     <div>
-                      <small
-                        style={{
-                          color: "#64748b",
-                        }}
-                      >
-                        Pelapor
-                      </small>
-
-                      <strong
-                        style={{
-                          display: "block",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {report.user?.name || "Mahasiswa"}
-                      </strong>
+                      <small>Pelapor</small>
+                      <strong>{report.user?.name || "Mahasiswa"}</strong>
                     </div>
 
                     <div>
-                      <small
-                        style={{
-                          color: "#64748b",
-                        }}
-                      >
-                        Fasilitas
-                      </small>
-
-                      <strong
-                        style={{
-                          display: "block",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {report.facility?.name || "-"}
-                      </strong>
+                      <small>Fasilitas</small>
+                      <strong>{report.facility?.name || "-"}</strong>
                     </div>
 
                     <div>
-                      <small
-                        style={{
-                          color: "#64748b",
-                        }}
-                      >
-                        Lokasi
-                      </small>
-
-                      <strong
-                        style={{
-                          display: "block",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {report.facility?.location || "-"}
-                      </strong>
+                      <small>Lokasi</small>
+                      <strong>{report.facility?.location || "-"}</strong>
                     </div>
 
                     <div>
-                      <small
-                        style={{
-                          color: "#64748b",
-                        }}
-                      >
-                        Prioritas
-                      </small>
-
-                      <strong
-                        style={{
-                          display: "block",
-                          marginTop: "4px",
-                        }}
-                      >
+                      <small>Prioritas</small>
+                      <strong>
                         {getPriorityLabel(report.priority)}
                       </strong>
                     </div>
                   </div>
 
-                  <hr
-                    style={{
-                      border: 0,
-                      borderTop: "1px solid #e5e7eb",
-                      margin: "20px 0",
-                    }}
-                  />
+                  <hr className="report-divider" />
 
-                  {/* =========================
-                      ASSIGN TECHNICIAN
-                  ========================= */}
-
+                  {/* ASSIGN TECHNICIAN */}
                   <label
-                    style={{
-                      display: "block",
-                      fontWeight: "600",
-                      marginBottom: "7px",
-                    }}
+                    className="report-field-label"
+                    htmlFor={`technician-${report.id}`}
                   >
                     Teknisi
                   </label>
 
                   <select
+                    id={`technician-${report.id}`}
                     defaultValue=""
                     onChange={(e) =>
                       handleAssignTechnician(
@@ -605,11 +253,8 @@ function AdminReports() {
                         e.target.value
                       )
                     }
-                    style={selectStyle}
                   >
-                    <option value="">
-                      -- Pilih Teknisi --
-                    </option>
+                    <option value="">-- Pilih Teknisi --</option>
 
                     {technicians.map((technician) => (
                       <option
@@ -621,82 +266,47 @@ function AdminReports() {
                     ))}
                   </select>
 
-                  {/* =========================
-                      UPDATE STATUS
-                  ========================= */}
-
+                  {/* UPDATE STATUS */}
                   <label
-                    style={{
-                      display: "block",
-                      fontWeight: "600",
-                      marginTop: "15px",
-                      marginBottom: "7px",
-                    }}
+                    className="report-field-label status-label"
+                    htmlFor={`status-${report.id}`}
                   >
                     Update Status
                   </label>
 
                   <select
+                    id={`status-${report.id}`}
                     value={report.status}
                     onChange={(e) =>
-                      handleStatusChange(
-                        report.id,
-                        e.target.value
-                      )
+                      handleStatusChange(report.id, e.target.value)
                     }
-                    style={selectStyle}
                   >
                     {statuses.map((status) => (
-                      <option
-                        key={status}
-                        value={status}
-                      >
+                      <option key={status} value={status}>
                         {getStatusLabel(status)}
                       </option>
                     ))}
                   </select>
 
-                  {/* =========================
-                      DETAIL BUTTON
-                  ========================= */}
-
+                  {/* DETAIL BUTTON */}
                   <button
+                    type="button"
+                    className="report-detail-button"
                     onClick={() =>
                       navigate(`/admin/reports/${report.id}`)
                     }
-                    style={{
-                      width: "100%",
-                      marginTop: "15px",
-                      padding: "11px",
-                      border: "none",
-                      borderRadius: "8px",
-                      background: "#eff6ff",
-                      color: "#2563eb",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                    }}
                   >
                     👁 Lihat Detail
                   </button>
-                </div>
+                </article>
               ))}
-            </div>
+            </section>
           )}
         </div>
       </main>
     </div>
   );
 }
-
-const selectStyle = {
-  width: "100%",
-  padding: "11px",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  background: "white",
-  fontSize: "14px",
-  boxSizing: "border-box",
-};
 
 export default AdminReports;
 
