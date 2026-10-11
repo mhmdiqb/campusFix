@@ -1,8 +1,17 @@
 # CampusFix Backend
 
-Backend API untuk **CampusFix**, sistem pelaporan dan penanganan kerusakan fasilitas kampus. Aplikasi ini memungkinkan mahasiswa membuat laporan kerusakan, admin mengelola fasilitas dan laporan, serta teknisi menangani perbaikan berdasarkan assignment yang diberikan.
+Backend REST API untuk **CampusFix**, aplikasi pelaporan dan penanganan kerusakan fasilitas kampus. Sistem ini mendukung mahasiswa dalam membuat laporan, admin dalam mengelola laporan dan fasilitas, serta teknisi dalam menangani pekerjaan berdasarkan assignment.
 
-CampusFix dikembangkan dengan pendekatan backend-first menggunakan REST API, autentikasi berbasis JWT, role-based authorization, Prisma ORM, dan MySQL.
+Backend dikembangkan menggunakan Node.js, Express.js, Prisma ORM, dan MySQL. Autentikasi menggunakan JSON Web Token (JWT), sedangkan password disimpan dalam bentuk hash menggunakan bcrypt.
+
+## 🔗 Deployment
+
+* **Frontend:** https://campus-fix-sable.vercel.app
+* **Backend produksi:** https://campusfix.de.deplexo.com
+* **API Base URL:** https://campusfix.de.deplexo.com/api
+* **Repository:** https://github.com/mhmdiqb/campusFix
+
+CampusFix menggunakan layanan terpisah untuk frontend, backend, dan database. URL produksi digunakan untuk mengakses aplikasi online, sedangkan pengembangan lokal menggunakan server dan database lokal.
 
 ## 🚀 Tech Stack
 
@@ -15,6 +24,9 @@ CampusFix dikembangkan dengan pendekatan backend-first menggunakan REST API, aut
 * **Environment Configuration:** dotenv
 * **API Testing:** Thunder Client
 * **Version Control:** Git & GitHub
+* **Frontend Deployment:** Vercel
+* **Backend Deployment:** DePlexo
+* **Production Database:** Aiven MySQL
 
 ## 📁 Project Structure
 
@@ -30,22 +42,20 @@ campusFix/
 │   │   ├── routes/
 │   │   ├── utils/
 │   │   └── app.js
-│   ├── .env                 # Lokal, tidak diunggah
+│   ├── .env
 │   ├── package.json
 │   ├── package-lock.json
 │   └── README.md
-│
 ├── frontend/
 │   ├── public/
 │   ├── src/
 │   ├── package.json
 │   ├── package-lock.json
 │   └── README.md
-│
 └── .gitignore
 ```
 
-> Struktur di atas merupakan gambaran direktori utama. File `.env` digunakan untuk konfigurasi lokal dan tidak boleh berisi kredensial yang dipublikasikan ke GitHub.
+Struktur di atas merupakan gambaran direktori utama. Nama atau lokasi file dapat berubah mengikuti perkembangan implementasi. File `.env` digunakan untuk konfigurasi lokal dan tidak boleh berisi kredensial yang dipublikasikan ke GitHub.
 
 ## ✨ Features
 
@@ -60,15 +70,15 @@ campusFix/
 
 ### 2. User Roles
 
-| Role         | Tanggung jawab                                                                |
+| Role         | Tanggung Jawab                                                                |
 | ------------ | ----------------------------------------------------------------------------- |
-| `STUDENT`    | Membuat laporan kerusakan dan melihat laporan sesuai hak aksesnya.            |
-| `TECHNICIAN` | Melihat assignment dan memperbarui progres pekerjaan.                         |
+| `STUDENT`    | Membuat laporan kerusakan dan melihat laporan sesuai hak akses.               |
+| `TECHNICIAN` | Melihat assignment miliknya dan memperbarui progres pekerjaan.                |
 | `ADMIN`      | Mengelola laporan, fasilitas, kategori, assignment, dashboard, dan audit log. |
 
 ### 3. Facility Management
 
-Pengelolaan data fasilitas kampus meliputi:
+Pengelolaan fasilitas kampus mencakup:
 
 * Melihat daftar fasilitas.
 * Melihat detail fasilitas.
@@ -89,7 +99,7 @@ Kategori digunakan untuk mengelompokkan fasilitas kampus.
 
 ### 5. Report Management
 
-Sistem laporan kerusakan mendukung:
+Sistem laporan mendukung:
 
 * Membuat laporan.
 * Melihat daftar laporan.
@@ -99,13 +109,11 @@ Sistem laporan kerusakan mendukung:
 * Melihat riwayat perubahan laporan.
 * Mengonfirmasi penyelesaian laporan.
 
-Data laporan mencakup informasi seperti judul, deskripsi, prioritas, status, pelapor, dan fasilitas terkait.
+Data laporan dapat mencakup judul, deskripsi, prioritas, status, pelapor, dan fasilitas terkait.
 
 ### 6. Report Images
 
-CampusFix menyediakan endpoint untuk menambahkan gambar pada laporan.
-
-Validasi kepemilikan laporan digunakan untuk mencegah pengguna menambahkan gambar ke laporan milik pengguna lain.
+CampusFix menyediakan endpoint untuk menambahkan gambar pada laporan. Validasi kepemilikan laporan digunakan untuk mencegah pengguna menambahkan gambar ke laporan milik pengguna lain.
 
 ### 7. Technician Assignment
 
@@ -123,8 +131,6 @@ Fitur assignment mencakup:
 Validasi assignment digunakan untuk membatasi akses teknisi terhadap pekerjaan yang ditugaskan kepadanya.
 
 ### 8. Report Status & Workflow
-
-Status laporan yang digunakan:
 
 | Status        | Keterangan                                 |
 | ------------- | ------------------------------------------ |
@@ -160,7 +166,7 @@ COMPLETED
 CONFIRMED
 ```
 
-Laporan dapat berakhir dengan status `REJECTED` apabila ditolak. Perubahan status dilakukan melalui endpoint sesuai hak akses masing-masing role.
+Laporan juga dapat berakhir dengan status `REJECTED`. Perubahan status mengikuti aturan akses dan alur yang diterapkan oleh backend.
 
 ### 9. Admin Dashboard
 
@@ -168,15 +174,13 @@ Backend menyediakan endpoint dashboard admin untuk mendukung tampilan ringkasan 
 
 ### 10. Audit Logging
 
-Audit log digunakan untuk mencatat aktivitas penting dalam sistem, termasuk pembuatan assignment dan perubahan status.
+Audit log digunakan untuk mencatat aktivitas penting dalam sistem, termasuk pembuatan assignment dan perubahan status. Pencatatan ini membantu penelusuran aktivitas dan meningkatkan akuntabilitas pengelolaan laporan.
 
-Pencatatan audit membantu proses penelusuran aktivitas dan meningkatkan akuntabilitas pengelolaan laporan.
-
-## 🛠️ Installation
+## 🛠️ Installation & Local Setup
 
 ### Prerequisites
 
-Pastikan perangkat telah memiliki:
+Pastikan perangkat sudah memiliki:
 
 * Node.js dan npm.
 * MySQL Server.
@@ -189,6 +193,8 @@ git clone https://github.com/mhmdiqb/campusFix.git
 cd campusFix/backend
 ```
 
+Jika repository sudah tersedia di komputer, cukup masuk ke direktori `backend`.
+
 ### 2. Install Dependencies
 
 ```bash
@@ -197,17 +203,18 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Buat file `.env` di dalam direktori `backend/`.
+Buat file `.env` di direktori `backend/`. Berikut contoh konfigurasi untuk MySQL lokal:
 
 ```env
-DATABASE_URL="mysql://USERNAME:PASSWORD@localhost:3307/campusfix"
+DATABASE_URL="mysql://USERNAME:PASSWORD@localhost:3307/campusfix_db"
 JWT_SECRET="ganti_dengan_secret_yang_aman"
+JWT_EXPIRES_IN="1d"
 PORT=3000
 ```
 
-Sesuaikan username, password, nama database, port MySQL, dan variabel lain dengan konfigurasi lokal.
+Sesuaikan `USERNAME`, `PASSWORD`, port MySQL, dan nama database dengan konfigurasi lokal. Contoh ini menggunakan database `campusfix_db`; pastikan database tersebut sudah dibuat.
 
-**Penting:** Jangan mengunggah file `.env` berisi kredensial asli ke GitHub. Gunakan secret yang kuat dan unik untuk `JWT_SECRET`.
+**Penting:** Jangan mengunggah file `.env` yang berisi kredensial asli ke GitHub. Gunakan `JWT_SECRET` yang kuat dan unik. Contoh secret di atas tidak boleh digunakan untuk produksi.
 
 ### 4. Prepare Database
 
@@ -219,43 +226,53 @@ Generate Prisma Client:
 npx prisma generate
 ```
 
-Terapkan migration yang sudah tersedia:
+Terapkan migration yang tersedia:
 
 ```bash
 npx prisma migrate deploy
 ```
 
-Untuk lingkungan pengembangan ketika membuat migration baru, gunakan:
+Untuk membuat migration baru selama pengembangan:
 
 ```bash
 npx prisma migrate dev --name nama_migration
 ```
 
+Jalankan `migrate dev` hanya pada lingkungan pengembangan. Sebelum menerapkan migration pada database produksi, periksa migration dan siapkan cadangan data yang diperlukan.
+
 ### 5. Start the Server
 
-Jalankan server dalam mode development:
+Jalankan server dalam mode development jika script `dev` tersedia:
 
 ```bash
 npm run dev
 ```
 
-Jika script `dev` tidak tersedia tetapi script `start` tersedia, gunakan:
+Jika proyek menggunakan script `start`, jalankan:
 
 ```bash
 npm start
 ```
 
-Base URL backend lokal:
+Base URL lokal:
 
 ```text
 http://localhost:3000
 ```
 
-Health check:
+Base URL produksi:
 
-```http
-GET /api/health
+```text
+https://campusfix.de.deplexo.com
 ```
+
+API Base URL produksi:
+
+```text
+https://campusfix.de.deplexo.com/api
+```
+
+Untuk health check, gunakan `GET /api/health` hanya jika endpoint tersebut tersedia pada implementasi backend.
 
 ## 🔐 Authentication
 
@@ -265,84 +282,86 @@ Endpoint yang memerlukan autentikasi menggunakan JWT pada header request:
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-Token diperoleh melalui proses login dan digunakan untuk mengakses endpoint sesuai role pengguna.
+Token diperoleh melalui proses login dan digunakan untuk mengakses endpoint sesuai role pengguna. Jangan membagikan token autentikasi di screenshot, log publik, atau repository.
 
 ## 📡 API Endpoints
 
-Base URL:
+Base URL produksi:
 
 ```text
-http://localhost:3000/api
+https://campusfix.de.deplexo.com/api
 ```
+
+Daftar berikut merangkum endpoint yang didokumentasikan dalam README proyek. Detail request, response, dan otorisasi akhir harus mengikuti implementasi route dan controller yang aktif.
 
 ### Authentication
 
 | Method | Endpoint         | Access        |
 | ------ | ---------------- | ------------- |
-| POST   | `/auth/register` | Public        |
-| POST   | `/auth/login`    | Public        |
-| GET    | `/auth/me`       | Authenticated |
+| `POST` | `/auth/register` | Public        |
+| `POST` | `/auth/login`    | Public        |
+| `GET`  | `/auth/me`       | Authenticated |
 
 ### Reports
 
-| Method | Endpoint               | Access        |
-| ------ | ---------------------- | ------------- |
-| POST   | `/reports`             | Authenticated |
-| GET    | `/reports`             | Authenticated |
-| GET    | `/reports/:id`         | Authenticated |
-| GET    | `/reports/:id/history` | Authenticated |
-| POST   | `/reports/:id/notes`   | Authenticated |
-| PATCH  | `/reports/:id/status`  | ADMIN         |
-| PATCH  | `/reports/:id/confirm` | Authenticated |
+| Method  | Endpoint               | Access        |
+| ------- | ---------------------- | ------------- |
+| `POST`  | `/reports`             | Authenticated |
+| `GET`   | `/reports`             | Authenticated |
+| `GET`   | `/reports/:id`         | Authenticated |
+| `GET`   | `/reports/:id/history` | Authenticated |
+| `POST`  | `/reports/:id/notes`   | Authenticated |
+| `PATCH` | `/reports/:id/status`  | `ADMIN`       |
+| `PATCH` | `/reports/:id/confirm` | Authenticated |
 
 ### Report Images
 
 | Method | Endpoint              | Access        |
 | ------ | --------------------- | ------------- |
-| POST   | `/reports/:id/images` | Authenticated |
+| `POST` | `/reports/:id/images` | Authenticated |
 
 ### Facilities
 
-| Method | Endpoint          | Access        |
-| ------ | ----------------- | ------------- |
-| GET    | `/facilities`     | Authenticated |
-| GET    | `/facilities/:id` | Authenticated |
-| POST   | `/facilities`     | ADMIN         |
-| PATCH  | `/facilities/:id` | ADMIN         |
-| DELETE | `/facilities/:id` | ADMIN         |
+| Method   | Endpoint          | Access        |
+| -------- | ----------------- | ------------- |
+| `GET`    | `/facilities`     | Authenticated |
+| `GET`    | `/facilities/:id` | Authenticated |
+| `POST`   | `/facilities`     | `ADMIN`       |
+| `PATCH`  | `/facilities/:id` | `ADMIN`       |
+| `DELETE` | `/facilities/:id` | `ADMIN`       |
 
 ### Facility Categories
 
-| Method | Endpoint                   | Access        |
-| ------ | -------------------------- | ------------- |
-| GET    | `/facility-categories`     | Authenticated |
-| POST   | `/facility-categories`     | ADMIN         |
-| PATCH  | `/facility-categories/:id` | ADMIN         |
-| DELETE | `/facility-categories/:id` | ADMIN         |
+| Method   | Endpoint                   | Access        |
+| -------- | -------------------------- | ------------- |
+| `GET`    | `/facility-categories`     | Authenticated |
+| `POST`   | `/facility-categories`     | `ADMIN`       |
+| `PATCH`  | `/facility-categories/:id` | `ADMIN`       |
+| `DELETE` | `/facility-categories/:id` | `ADMIN`       |
 
 ### Assignments
 
-| Method | Endpoint                                  | Access     |
-| ------ | ----------------------------------------- | ---------- |
-| GET    | `/assignments/my`                         | TECHNICIAN |
-| POST   | `/assignments/reports/:reportId`          | ADMIN      |
-| PATCH  | `/assignments/reports/:reportId/start`    | TECHNICIAN |
-| PATCH  | `/assignments/reports/:reportId/complete` | TECHNICIAN |
-| PATCH  | `/assignments/:id/status`                 | TECHNICIAN |
+| Method  | Endpoint                                  | Access       |
+| ------- | ----------------------------------------- | ------------ |
+| `GET`   | `/assignments/my`                         | `TECHNICIAN` |
+| `POST`  | `/assignments/reports/:reportId`          | `ADMIN`      |
+| `PATCH` | `/assignments/reports/:reportId/start`    | `TECHNICIAN` |
+| `PATCH` | `/assignments/reports/:reportId/complete` | `TECHNICIAN` |
+| `PATCH` | `/assignments/:id/status`                 | `TECHNICIAN` |
 
 ### Dashboard
 
-| Method | Endpoint           | Access |
-| ------ | ------------------ | ------ |
-| GET    | `/dashboard/admin` | ADMIN  |
+| Method | Endpoint           | Access  |
+| ------ | ------------------ | ------- |
+| `GET`  | `/dashboard/admin` | `ADMIN` |
 
 ### Audit Logs
 
-| Method | Endpoint      | Access |
-| ------ | ------------- | ------ |
-| GET    | `/audit-logs` | ADMIN  |
+| Method | Endpoint      | Access  |
+| ------ | ------------- | ------- |
+| `GET`  | `/audit-logs` | `ADMIN` |
 
-> Catatan: tabel endpoint merangkum dokumentasi API yang tersedia. Detail validasi, format request/response, dan aturan otorisasi tetap mengikuti implementasi route dan controller di backend.
+> Catatan: daftar endpoint di atas disusun berdasarkan dokumentasi yang tersedia, bukan hasil pemeriksaan seluruh source code. Verifikasi kembali endpoint, method, dan role sebelum menjadikannya dokumentasi API final.
 
 ## 🧪 API Testing
 
@@ -350,7 +369,7 @@ Thunder Client dapat digunakan untuk menguji endpoint backend.
 
 Area pengujian meliputi:
 
-* Health check.
+* Health check, jika endpoint tersedia.
 * Registrasi dan login.
 * Validasi JWT dan role pengguna.
 * Pengelolaan fasilitas dan kategori.
@@ -361,7 +380,19 @@ Area pengujian meliputi:
 * Dashboard admin.
 * Audit log.
 
-Pengujian endpoint sebaiknya dilakukan menggunakan token dari masing-masing role untuk memastikan batasan akses berjalan sesuai rancangan.
+Gunakan token dari akun dengan role yang sesuai untuk memastikan pembatasan akses bekerja sebagaimana mestinya.
+
+## 🚀 Deployment
+
+CampusFix menggunakan layanan terpisah untuk frontend, backend, dan database:
+
+* **Frontend:** Vercel — https://campus-fix-sable.vercel.app
+* **Backend:** DePlexo — https://campusfix.de.deplexo.com
+* **Database produksi:** Aiven MySQL
+
+Konfigurasi produksi harus disimpan pada environment variables di layanan hosting, bukan di dalam source code. Pastikan `DATABASE_URL`, `JWT_SECRET`, dan variabel sensitif lainnya diatur melalui dashboard hosting.
+
+Jangan mencantumkan kredensial database, password, atau nilai secret dalam dokumentasi publik. Setelah melakukan perubahan backend, uji endpoint yang terdampak dan pastikan deployment berhasil sebelum menyatakan fitur siap digunakan.
 
 ## 🔒 Security
 
@@ -376,11 +407,11 @@ Mekanisme keamanan yang digunakan atau dirancang dalam backend meliputi:
 * Audit log untuk aktivitas penting.
 * Environment variables untuk konfigurasi sensitif.
 
-Keamanan aplikasi juga bergantung pada pengelolaan secret, konfigurasi database, validasi input, dan pengujian akses pada setiap endpoint.
+Keamanan aplikasi juga bergantung pada validasi input, pengelolaan secret, konfigurasi database, dan pengujian akses pada setiap endpoint. Pembatasan akses di frontend tidak menggantikan validasi otorisasi di backend.
 
 ## 📌 Project Status
 
-Backend CampusFix telah dikembangkan dengan fitur utama berikut:
+Backend CampusFix telah dikembangkan untuk mendukung fitur utama berikut:
 
 * Authentication dan authorization.
 * Pengelolaan role pengguna.
@@ -393,17 +424,17 @@ Backend CampusFix telah dikembangkan dengan fitur utama berikut:
 * Technician status updates.
 * Admin dashboard.
 * Audit logging.
+* Deployment backend dan database cloud.
 
-Pengembangan berikutnya dapat difokuskan pada peningkatan validasi, pengujian otomatis, dokumentasi request/response, serta persiapan deployment.
+Status operasional masing-masing fitur tetap perlu diverifikasi melalui pengujian. Pengembangan lanjutan dapat mencakup pengujian otomatis, validasi input yang lebih menyeluruh, dokumentasi request/response, dan peningkatan monitoring.
 
 ## 👨‍💻 Author
 
 **Muhammad Iqbal**
 
-GitHub: [@mhmdiqb](https://github.com/mhmdiqb)
-
-Repository: [CampusFix](https://github.com/mhmdiqb/campusFix)
+* GitHub: [@mhmdiqb](https://github.com/mhmdiqb)
+* Repository: [CampusFix](https://github.com/mhmdiqb/campusFix)
 
 ---
 
-CampusFix merupakan proyek pengembangan sistem pelaporan dan penanganan kerusakan fasilitas kampus yang dibangun untuk menerapkan konsep backend development, REST API, database management, authentication, authorization, dan audit logging.
+CampusFix merupakan proyek pengembangan sistem pelaporan dan penanganan kerusakan fasilitas kampus untuk menerapkan konsep backend development, REST API, database management, authentication, authorization, dan audit logging.
