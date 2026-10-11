@@ -60,24 +60,25 @@ function App() {
         />
 
         
-      {/* DETAIL LAPORAN — STUDENT & ADMIN */}
-      <Route
-        path="/reports/:id"
-        element={
-          <ProtectedRoute>
-            <ReportDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Detail laporan mahasiswa */}
+        <Route
+          path="/reports/:id"
+          element={
+            <ProtectedRoute allowedRole="STUDENT">
+              <ReportDetail />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/admin/reports/:id"
-        element={
-          <ProtectedRoute allowedRole="ADMIN">
-            <ReportDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Detail laporan admin */}
+        <Route
+          path="/admin/reports/:id"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <ReportDetail />
+            </ProtectedRoute>
+          }
+        />
 
 
         {/* ADMIN - LAPORAN */}
