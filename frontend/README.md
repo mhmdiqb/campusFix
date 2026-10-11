@@ -1,17 +1,27 @@
 # CampusFix Frontend
 
-Frontend untuk **CampusFix**, sebuah aplikasi pelaporan dan penanganan kerusakan fasilitas kampus. Aplikasi ini menyediakan antarmuka bagi mahasiswa untuk melaporkan kerusakan, teknisi untuk menangani tugas perbaikan, dan admin untuk mengelola laporan fasilitas kampus.
+Frontend untuk **CampusFix**, aplikasi pelaporan dan penanganan kerusakan fasilitas kampus. Aplikasi ini menyediakan antarmuka bagi mahasiswa untuk melaporkan kerusakan, teknisi untuk menangani tugas perbaikan, dan admin untuk mengelola laporan fasilitas kampus.
 
-Frontend dikembangkan menggunakan React dan Vite, serta terhubung dengan backend CampusFix melalui REST API.
+Frontend dikembangkan menggunakan React, Vite, JavaScript, dan CSS, serta terhubung dengan backend CampusFix melalui REST API.
+
+## 🌐 Demo Online
+
+* **Frontend:** https://campus-fix-sable.vercel.app
+* **Backend:** https://campusfix.de.deplexo.com
+* **API Base URL:** https://campusfix.de.deplexo.com/api
+* **Repository GitHub:** https://github.com/mhmdiqb/campusFix
 
 ## 🚀 Tech Stack
 
 * **Library UI:** React
-* **Build Tool & Development Server:** Vite
+* **Build Tool:** Vite
 * **Programming Language:** JavaScript
 * **Styling:** CSS
-* **HTTP Communication:** Fetch API atau konfigurasi API pada service frontend
-* **Version Control:** Git & GitHub
+* **HTTP Client:** Axios
+* **Routing:** React Router
+* **Version Control:** Git dan GitHub
+* **Frontend Hosting:** Vercel
+* **Backend Integration:** REST API
 
 ## 📁 Project Structure
 
@@ -20,7 +30,6 @@ frontend/
 ├── public/
 ├── src/
 │   ├── assets/
-│   │   └── vite.svg
 │   ├── pages/
 │   │   ├── AdminDashboard.jsx
 │   │   ├── AdminDashboard.css
@@ -48,7 +57,6 @@ frontend/
 │   ├── main.jsx
 │   └── ProtectedRoute.jsx
 ├── .gitignore
-├── eslint.config.js
 ├── index.html
 ├── package.json
 ├── package-lock.json
@@ -56,94 +64,117 @@ frontend/
 └── vite.config.js
 ```
 
-**Keterangan folder utama:**
+Keterangan folder utama:
 
-* `pages/` — halaman login, dashboard mahasiswa, dashboard admin, pengelolaan laporan, teknisi, dan detail laporan.
-* `services/api.js` — bagian frontend yang menangani komunikasi dengan backend API.
-* `ProtectedRoute.jsx` — komponen untuk membantu membatasi akses halaman berdasarkan autentikasi dan role.
-* `App.jsx` dan `App.css` — komponen utama aplikasi dan styling-nya.
-* `index.css` — styling global aplikasi.
+* `pages/` — halaman login, dashboard, laporan, detail laporan, dan pengelolaan teknisi.
+* `services/api.js` — konfigurasi komunikasi frontend dengan backend API.
+* `ProtectedRoute.jsx` — membantu membatasi akses halaman berdasarkan autentikasi dan role.
+* `App.jsx` dan `App.css` — komponen utama aplikasi beserta styling.
+* `index.css` — styling global.
 * `assets/` — aset statis yang digunakan frontend.
 
-
-> Struktur di atas merupakan gambaran berdasarkan file yang terlihat pada repository. Nama dan lokasi file lain dapat berbeda mengikuti perkembangan proyek.
+Struktur tersebut merupakan gambaran file utama proyek dan dapat berubah mengikuti perkembangan aplikasi.
 
 ## ✨ Features
 
 ### 1. Authentication
 
-Frontend menyediakan halaman login untuk pengguna mengakses aplikasi CampusFix.
+Frontend menyediakan halaman login untuk pengguna mengakses CampusFix.
 
 * Mengirim permintaan login ke backend.
 * Menggunakan token autentikasi untuk request yang memerlukan login.
-* Mengarahkan pengguna berdasarkan alur autentikasi aplikasi.
+* Mendukung alur autentikasi dan navigasi berdasarkan role pengguna.
 
 ### 2. Role-Based Access
 
-CampusFix memiliki tiga role pengguna utama:
+CampusFix memiliki tiga role utama:
 
-| Role         | Fungsi                                                           |
-| ------------ | ---------------------------------------------------------------- |
-| `STUDENT`    | Mengakses dashboard mahasiswa dan laporan kerusakan.             |
-| `TECHNICIAN` | Melihat tugas yang ditugaskan dan memperbarui progres pekerjaan. |
-| `ADMIN`      | Mengelola laporan dan penugasan teknisi melalui halaman admin.   |
+| Role         | Fungsi                                                     |
+| ------------ | ---------------------------------------------------------- |
+| `STUDENT`    | Membuat laporan kerusakan dan memantau laporan pribadi.    |
+| `TECHNICIAN` | Melihat tugas perbaikan dan memperbarui progres pekerjaan. |
+| `ADMIN`      | Mengelola laporan dan penugasan teknisi.                   |
 
-Komponen `ProtectedRoute.jsx` digunakan untuk mendukung pembatasan akses halaman berdasarkan autentikasi dan konfigurasi role.
+Pembatasan akses halaman didukung oleh `ProtectedRoute.jsx`. Backend tetap bertanggung jawab untuk memvalidasi token, role, dan izin akses.
 
 ### 3. Student Dashboard
 
-Dashboard mahasiswa menjadi halaman utama untuk mengakses fitur pelaporan fasilitas kampus.
-
-Fitur yang dikembangkan meliputi tampilan ringkasan dan akses menuju data laporan mahasiswa.
+Dashboard mahasiswa menyediakan akses ke fitur utama pelaporan kerusakan fasilitas kampus serta informasi terkait laporan.
 
 ### 4. My Reports
 
-Halaman `MyReports.jsx` digunakan untuk menampilkan laporan mahasiswa.
+Halaman `MyReports.jsx` menampilkan laporan yang dibuat mahasiswa sehingga pengguna dapat memantau laporan miliknya.
 
-Halaman ini membantu pengguna melihat laporan yang telah dibuat dan mengakses detail laporan sesuai hak aksesnya.
+### 5. Create Report
 
-### 5. Report Detail
+Mahasiswa dapat membuat laporan kerusakan fasilitas kampus dengan mengisi informasi yang diperlukan, seperti judul, deskripsi, fasilitas, prioritas, dan foto apabila tersedia pada form.
 
-Halaman `ReportDetail.jsx` digunakan untuk menampilkan informasi terperinci mengenai suatu laporan.
+Data laporan dikirimkan ke backend untuk diproses dan disimpan.
 
-Informasi yang ditampilkan mengikuti data yang disediakan backend, seperti judul, deskripsi, status, prioritas, dan informasi terkait fasilitas.
+### 6. Report Detail
 
-### 6. Technician Dashboard
+Halaman `ReportDetail.jsx` menampilkan informasi terperinci mengenai laporan, seperti:
 
-Dashboard teknisi menyediakan tampilan tugas perbaikan yang ditugaskan kepada teknisi.
+* Judul dan deskripsi kerusakan.
+* Fasilitas dan lokasi.
+* Status serta prioritas laporan.
+* Foto kerusakan apabila tersedia.
+* Informasi teknisi atau penugasan apabila tersedia.
 
-Fitur yang telah dikembangkan meliputi:
+Informasi yang ditampilkan mengikuti data dari backend dan hak akses pengguna.
 
-* Melihat assignment milik teknisi yang sedang login.
+### 7. Technician Dashboard
+
+Dashboard teknisi menyediakan fitur untuk:
+
+* Melihat tugas yang ditugaskan kepada teknisi yang sedang login.
 * Menampilkan ringkasan tugas berdasarkan status.
 * Melihat detail laporan yang ditugaskan.
 * Memperbarui status pekerjaan melalui backend.
 
-### 7. Admin Interface
+### 8. Admin Interface
 
-Frontend juga mencakup antarmuka admin untuk mendukung pengelolaan laporan dan penugasan teknisi.
+Antarmuka admin mendukung pengelolaan laporan dan teknisi melalui beberapa bagian:
 
-Halaman admin menggunakan sidebar navigasi untuk berpindah antarbagian aplikasi. Tampilan dirancang menggunakan CSS dengan tema terang pada halaman utama.
+* Dashboard ringkasan laporan.
+* Daftar dan detail laporan.
+* Pembaruan status laporan.
+* Pengelolaan teknisi.
+* Penugasan teknisi sesuai fitur yang tersedia.
 
-### 8. API Integration
+## 🔗 API Integration
 
-Frontend berkomunikasi dengan backend CampusFix melalui REST API.
+Frontend berkomunikasi dengan backend CampusFix melalui REST API. Konfigurasi koneksi dikelola melalui `src/services/api.js` dan environment variable `VITE_API_URL`.
 
-File `src/services/api.js` digunakan sebagai bagian dari pengelolaan komunikasi API frontend.
-
-Backend lokal secara default menggunakan alamat:
+**Backend online:**
 
 ```text
 https://campusfix.de.deplexo.com
 ```
 
-Pastikan alamat API pada konfigurasi frontend sesuai dengan backend yang sedang dijalankan.
+**API Base URL:**
+
+```text
+https://campusfix.de.deplexo.com/api
+```
+
+Untuk deployment Vercel, pastikan environment variable berikut telah dikonfigurasi:
+
+```env
+VITE_API_URL=https://campusfix.de.deplexo.com/api
+```
+
+Setelah mengubah environment variable di Vercel, lakukan redeployment agar perubahan diterapkan.
+
+Untuk pengembangan lokal, konfigurasi API dapat disesuaikan dengan backend yang sedang dijalankan.
+
+Backend menangani autentikasi, otorisasi, data fasilitas, laporan, gambar laporan, penugasan teknisi, pembaruan status, dan audit logging.
 
 ## ⚙️ Installation
 
 ### Prerequisites
 
-Pastikan sudah tersedia:
+Pastikan perangkat telah memiliki:
 
 * Node.js
 * npm
@@ -152,19 +183,12 @@ Pastikan sudah tersedia:
 
 ### 1. Clone Repository
 
-Jika repository belum tersedia di komputer:
-
 ```bash
 git clone https://github.com/mhmdiqb/campusFix.git
-```
-
-Masuk ke direktori frontend:
-
-```bash
 cd campusFix/frontend
 ```
 
-Jika repository sudah ada, cukup masuk ke folder `frontend`.
+Jika repository sudah tersedia di komputer, langsung masuk ke direktori `frontend`.
 
 ### 2. Install Dependencies
 
@@ -174,15 +198,15 @@ npm install
 
 ### 3. Configure API Connection
 
-Pastikan konfigurasi pada `src/services/api.js` mengarah ke backend yang benar.
+Buat file `.env` di dalam direktori `frontend` apabila belum tersedia, lalu isi:
 
-Alamat backend lokal:
-
-```text
-https://campusfix.de.deplexo.com
+```env
+VITE_API_URL=https://campusfix.de.deplexo.com/api
 ```
 
-Sesuaikan konfigurasi tersebut dengan implementasi `api.js` yang digunakan proyek.
+Pastikan nama variabel sesuai dengan yang digunakan di `src/services/api.js`.
+
+Jangan memasukkan JWT secret atau kredensial database backend ke environment variable frontend.
 
 ### 4. Run Development Server
 
@@ -190,37 +214,15 @@ Sesuaikan konfigurasi tersebut dengan implementasi `api.js` yang digunakan proye
 npm run dev
 ```
 
-Vite akan menampilkan alamat lokal di terminal. Secara default, alamatnya biasanya:
+Vite akan menampilkan alamat lokal di terminal. Biasanya alamatnya:
 
 ```text
 http://localhost:5173
 ```
 
-Buka alamat tersebut melalui browser untuk mengakses frontend CampusFix.
+Buka alamat tersebut melalui browser untuk mengakses frontend lokal.
 
-## 🔗 Backend Integration
-
-Frontend terhubung dengan backend CampusFix yang menangani:
-
-* Authentication dan authorization.
-* Data fasilitas dan kategori fasilitas.
-* Pembuatan dan pengelolaan laporan.
-* Riwayat serta gambar laporan.
-* Assignment dan status pekerjaan teknisi.
-* Dashboard admin.
-* Audit logging.
-
-Frontend berfungsi sebagai antarmuka pengguna, sedangkan validasi data, aturan akses, dan proses bisnis utama ditangani backend.
-
-## 🧪 Development
-
-Untuk menjalankan frontend dan backend secara lokal:
-
-1. Pastikan MySQL telah berjalan.
-2. Jalankan backend CampusFix sesuai instruksi pada `backend/README.md`.
-3. Jalankan frontend dengan `npm run dev`.
-4. Buka URL lokal yang diberikan Vite.
-5. Uji login serta fitur menggunakan akun sesuai role masing-masing.
+### 5. Run Linter
 
 Untuk memeriksa masalah kode menggunakan ESLint, jalankan:
 
@@ -228,28 +230,67 @@ Untuk memeriksa masalah kode menggunakan ESLint, jalankan:
 npm run lint
 ```
 
+## 🧪 Demo dan Pengujian Panitia
+
+Panitia dapat mengakses aplikasi melalui tautan berikut:
+
+* **Website CampusFix:** https://campus-fix-sable.vercel.app
+* **Backend API:** https://campusfix.de.deplexo.com
+
+### Skenario Pengujian
+
+| Role       | Skenario pengujian                                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| STUDENT    | Login, membuat laporan kerusakan, melihat laporan pribadi, dan memantau status laporan.                              |
+| TECHNICIAN | Login, melihat tugas yang ditugaskan, membuka detail laporan, dan memperbarui progres pekerjaan.                     |
+| ADMIN      | Login, melihat ringkasan laporan, membuka detail laporan, memperbarui status, serta mengelola teknisi dan penugasan. |
+
+### Akun Demo
+
+Isi bagian berikut dengan kredensial akun demo yang benar-benar aktif dan telah diuji sebelum README dipublikasikan.
+
+| Role       | Email                                                                               | Password                        |
+| ---------- | ----------------------------------------------------------------------------------- | ------------------------------- |
+| STUDENT    | [mahasiswa@student.unida.gontor.ac.id](mailto:mahasiswa@student.unida.gontor.ac.id) | `[Isi password demo mahasiswa]` |
+| TECHNICIAN | `[Isi email demo teknisi]`                                                          | `[Isi password demo teknisi]`   |
+| ADMIN      | `[Isi email demo admin]`                                                            | `[Isi password demo admin]`     |
+
+**Catatan:** Ganti semua teks di dalam tanda kurung siku dengan kredensial demo yang telah disiapkan. Jangan mencantumkan password pribadi atau kredensial layanan lain. Pastikan setiap akun dapat login dan memiliki role yang sesuai sebelum diberikan kepada panitia.
+
+### Alur Pengujian yang Disarankan
+
+1. Buka website CampusFix.
+2. Login menggunakan akun demo sesuai role.
+3. Uji fitur yang tersedia untuk role tersebut.
+4. Periksa apakah data yang dibuat atau diperbarui tampil sesuai pada aplikasi.
+5. Logout sebelum mencoba role yang berbeda.
+
+Ketersediaan fitur bergantung pada konfigurasi backend dan hak akses masing-masing akun.
+
 ## 🔒 Security Notes
 
 * Jangan menyimpan password, JWT secret, atau kredensial database di source code frontend.
-* Jangan menganggap pembatasan halaman frontend sebagai satu-satunya mekanisme keamanan.
-* Endpoint backend harus tetap memvalidasi token, role, dan hak akses pengguna.
-* Jangan menaruh secret backend di variabel frontend yang dapat diakses browser.
-* Pastikan token autentikasi ditangani dengan hati-hati dan tidak dicatat ke log publik.
+* Jangan mengandalkan pembatasan halaman frontend sebagai satu-satunya mekanisme keamanan.
+* Backend harus memvalidasi token, role, dan hak akses pada endpoint yang memerlukan autentikasi.
+* Jangan memasukkan secret backend ke variabel `VITE_*` karena nilainya dapat diakses oleh browser.
+* Gunakan akun demo khusus untuk pengujian panitia.
+* Jangan mencatat token atau kredensial sensitif ke log publik.
+* Pastikan file `.env` yang berisi konfigurasi sensitif tidak ikut diunggah ke repository.
 
 ## 📌 Project Status
 
-Frontend CampusFix dikembangkan untuk mendukung alur utama aplikasi, termasuk:
+Frontend CampusFix telah dikembangkan untuk mendukung alur utama aplikasi, meliputi:
 
 * Halaman login.
 * Dashboard mahasiswa.
-* Daftar laporan mahasiswa.
+* Pembuatan dan daftar laporan.
 * Detail laporan.
 * Dashboard teknisi.
-* Tampilan pengelolaan laporan oleh admin.
-* Integrasi dengan backend CampusFix.
+* Antarmuka admin.
+* Integrasi dengan backend REST API.
 * Pembatasan akses halaman berdasarkan autentikasi dan role.
 
-Pengembangan berikutnya dapat mencakup peningkatan pengalaman pengguna, validasi form, penanganan loading dan error, pengujian komponen, serta penyempurnaan tampilan responsif.
+Pengembangan lanjutan dapat mencakup peningkatan validasi form, penanganan loading dan error, pengujian otomatis, serta penyempurnaan tampilan responsif.
 
 ## 👨‍💻 Author
 
