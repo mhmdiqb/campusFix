@@ -498,3 +498,54 @@
   }
 }
 
+/* Perbaikan layout Admin Reports di HP */
+@media (max-width: 768px) {
+.admin-reports-page {
+display: flex !important;
+flex-direction: column !important;
+width: 100% !important;
+min-width: 0 !important;
+overflow-x: hidden !important;
+}
+
+.admin-reports-page > .admin-sidebar {
+position: relative !important;
+width: 100% !important;
+min-width: 0 !important;
+height: auto !important;
+min-height: auto !important;
+flex: none !important;
+}
+
+.admin-reports-page > main {
+width: 100% !important;
+min-width: 0 !important;
+flex: none !important;
+padding: 20px 14px !important;
+box-sizing: border-box !important;
+overflow-x: hidden !important;
+}
+
+.admin-reports-page > main > div {
+width: 100% !important;
+max-width: 100% !important;
+min-width: 0 !important;
+margin: 0 auto !important;
+}
+
+.admin-reports-page h1 {
+font-size: 28px !important;
+}
+
+.admin-reports-page > main > div > div[style*="grid"] {
+grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.admin-reports-page > main > div > div[style*="grid"] > div {
+min-width: 0 !important;
+box-sizing: border-box !important;
+overflow-wrap: anywhere;
+}
+}
+
+
