@@ -1,462 +1,320 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "./ReportDetail.css";
 
-function ReportDetail() {
-  const { id } = useParams();
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import AdminSidebar from "./AdminSidebar";
+import "./AdminReports.css";
+
+const API_URL = "https://campusfix.de.deplexo.com/api";
+
+const statuses = [
+  "REPORTED",
+  "VERIFIED",
+  "ASSIGNED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CONFIRMED",
+  "REJECTED",
+];
+
+function AdminReports() {
   const navigate = useNavigate();
 
-  const [report, setReport] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [confirming, setConfirming] = useState(false);
+  const [assigningId, setAssigningId] = useState(null);
 
-  useEffect(() => {
-    fetchReportDetail();
-  }, [id]);
+  const getHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  });
 
-  const fetchReportDetail = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
+      const [reportsResponse, techniciansResponse] =
+        await Promise.all([
+          axios.get(`${API_URL}/reports`, {
+            headers: getHeaders(),
+          }),
+          axios.get(`${API_URL}/assignments/technicians`, {
+            headers: getHeaders(),
+          }),
+        ]);
 
-      const response = await axios.get(
-        `https://campusfix.de.deplexo.com/api/reports/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setReport(response.data.data);
+      setReports(reportsResponse.data.data || []);
+      setTechnicians(techniciansResponse.data.data || []);
     } catch (err) {
-      console.error("Gagal mengambil detail laporan:", err);
-
+      console.error("Gagal mengambil data:", err);
       setError(
         err.response?.data?.message ||
-          "Gagal mengambil detail laporan."
+          "Gagal mengambil data laporan."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleConfirmCompletion = async () => {
-    const confirmAction = window.confirm(
-      "Apakah kamu yakin laporan ini sudah selesai dan sesuai?"
-    );
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    if (!confirmAction) return;
+  const handleAssignTechnician = async (reportId, technicianId) => {
+    if (!technicianId) return;
 
     try {
-      setConfirming(true);
-      setError("");
+      setAssigningId(reportId);
 
-      const token = localStorage.getItem("token");
-
-      await axios.patch(
-        `https://campusfix.de.deplexo.com/api/reports/${id}/confirm`,
-        {
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await axios.post(
+        `${API_URL}/assignments/reports/${reportId}`,
+        { technicianId: Number(technicianId) },
+        { headers: getHeaders() }
       );
 
-      // Ambil data terbaru setelah berhasil
-      await fetchReportDetail();
-
-      alert("Laporan berhasil dikonfirmasi selesai.");
+      alert("Laporan berhasil ditugaskan ke teknisi.");
+      await fetchData();
     } catch (err) {
-      console.error("Gagal mengonfirmasi laporan:", err);
-
+      console.error("Gagal assign teknisi:", err);
       alert(
         err.response?.data?.message ||
-          "Gagal mengonfirmasi laporan."
+          "Gagal menugaskan laporan ke teknisi."
       );
     } finally {
-      setConfirming(false);
+      setAssigningId(null);
+    }
+  };
+
+  const handleStatusChange = async (reportId, status) => {
+    try {
+      await axios.patch(
+        `${API_URL}/reports/${reportId}/status`,
+        { status },
+        { headers: getHeaders() }
+      );
+
+      await fetchData();
+    } catch (err) {
+      console.error("Gagal mengubah status:", err);
+      alert(
+        err.response?.data?.message ||
+          "Gagal mengubah status laporan."
+      );
     }
   };
 
   const getStatusLabel = (status) => {
-    const statusMap = {
-      REPORTED: "Menunggu",
+    const labels = {
+      REPORTED: "Baru",
       VERIFIED: "Terverifikasi",
       ASSIGNED: "Ditugaskan",
-      IN_PROGRESS: "Sedang Dikerjakan",
+      IN_PROGRESS: "Diproses",
       COMPLETED: "Selesai",
       CONFIRMED: "Dikonfirmasi",
       REJECTED: "Ditolak",
     };
 
-    return statusMap[status] || status;
+    return labels[status] || status;
   };
 
   const getPriorityLabel = (priority) => {
-    const priorityMap = {
+    const labels = {
       LOW: "Rendah",
       MEDIUM: "Sedang",
       HIGH: "Tinggi",
       CRITICAL: "Kritis",
     };
 
-    return priorityMap[priority] || priority;
+    return labels[priority] || priority || "-";
   };
 
-  const getHistoryTitle = (update) => {
-    if (update.type === "STATUS_CHANGE") {
-      return getStatusLabel(update.status);
-    }
-
-    return "Catatan";
-  };
-
-  const getHistoryDescription = (update) => {
-    if (update.type === "STATUS_CHANGE") {
-      return `Status laporan berubah menjadi ${getStatusLabel(
-        update.status
-      )}`;
-    }
-
-    if (update.note) {
-      return update.note;
-    }
-
-    return "Aktivitas laporan";
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleString("id-ID", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   if (loading) {
     return (
-      <div className="report-detail-page">
-        <div className="report-message">
-          <h2>Memuat detail laporan...</h2>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="report-detail-page">
-        <div className="report-message">
-          <h2>{error}</h2>
-
-          <button
-            className="back-button"
-            onClick={() => navigate("/student")}
-          >
-            ← Kembali ke Dashboard
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!report) {
-    return (
-      <div className="report-detail-page">
-        <div className="report-message">
-          <h2>Laporan tidak ditemukan.</h2>
-
-          <button
-            className="back-button"
-            onClick={() => navigate("/student")}
-          >
-            ← Kembali ke Dashboard
-          </button>
-        </div>
+      <div className="admin-reports-loading">
+        <h2>Memuat laporan...</h2>
       </div>
     );
   }
 
   return (
-    <div className="report-detail-page">
-      <div className="report-detail-container">
+    <div className="admin-reports-page">
+      <AdminSidebar />
 
-        {/* BACK BUTTON */}
-        <button
-          className="back-button"
-          onClick={() => navigate("/student")}
-        >
-          ← Kembali
-        </button>
-
-        <div className="report-detail-card">
-
-          {/* HEADER */}
-          <div className="report-detail-header">
+      <main className="admin-reports-main">
+        <div className="admin-reports-content">
+          <header className="admin-reports-header">
             <div>
-              <span className="report-number">
-                LAPORAN #{report.id}
-              </span>
-
-              <h1>{report.title}</h1>
-            </div>
-
-            <span className="status-badge">
-              {getStatusLabel(report.status)}
-            </span>
-          </div>
-
-          {/* INFORMATION */}
-          <div className="report-info-grid">
-
-            <div className="info-item">
-              <span>Fasilitas</span>
-
-              <strong>
-                {report.facility?.name ||
-                  "Tidak diketahui"}
-              </strong>
-            </div>
-
-            <div className="info-item">
-              <span>Lokasi</span>
-
-              <strong>
-                {report.facility?.location ||
-                  "Tidak diketahui"}
-              </strong>
-            </div>
-
-            <div className="info-item">
-              <span>Prioritas</span>
-
-              <strong>
-                {getPriorityLabel(report.priority)}
-              </strong>
-            </div>
-
-            <div className="info-item">
-              <span>Dibuat Oleh</span>
-
-              <strong>
-                {report.user?.name || "Mahasiswa"}
-              </strong>
-            </div>
-
-          </div>
-
-          {/* DESCRIPTION */}
-          <section className="detail-section">
-            <h2>Deskripsi Kerusakan</h2>
-
-            <p className="description">
-              {report.description}
-            </p>
-          </section>
-
-          <section className="detail-section">
-            <h2>Foto Kerusakan</h2>
-
-            {!report.images || report.images.length === 0 ? (
-              <p>Tidak ada foto yang dilampirkan.</p>
-            ) : (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                  gap: "20px",
-                  marginTop: "15px",
-                }}
-              >
-                {report.images.map((image) => (
-                  <div key={image.id}>
-                    <img
-                      src={`https://campusfix.de.deplexo.com${image.imageUrl}`}
-                      alt="Foto kerusakan"
-                      style={{
-                        width: "100%",
-                        maxHeight: "400px",
-                        objectFit: "cover",
-                        borderRadius: "12px",
-                        border: "1px solid #e5e7eb",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* CONFIRM COMPLETION */}
-          {report.status === "COMPLETED" && (
-            <section className="detail-section confirmation-section">
-              <div className="confirmation-card">
-                <div className="confirmation-icon">
-                  ✓
-                </div>
-
-                <div className="confirmation-content">
-                  <h2>Laporan Sudah Selesai</h2>
-
-                  <p>
-                    Teknisi telah menyelesaikan laporan ini.
-                    Silakan konfirmasi jika perbaikan sudah sesuai.
-                  </p>
-
-                  <button
-                    className="confirm-button"
-                    onClick={handleConfirmCompletion}
-                    disabled={confirming}
-                  >
-                    {confirming
-                      ? "Mengonfirmasi..."
-                      : "✓ Konfirmasi Selesai"}
-                  </button>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* TECHNICIAN */}
-          {report.assignment && (
-            <section className="detail-section">
-
-              <h2>Teknisi</h2>
-
-              <div className="technician-card">
-
-                <div className="technician-avatar">
-                  {report.assignment.technician?.name
-                    ?.charAt(0)
-                    ?.toUpperCase() || "T"}
-                </div>
-
-                <div>
-                  <strong>
-                    {report.assignment.technician?.name ||
-                      "Belum tersedia"}
-                  </strong>
-
-                  <p>
-                    {report.assignment.technician?.email ||
-                      "-"}
-                  </p>
-                </div>
-
-              </div>
-            </section>
-          )}
-
-          {/* HISTORY / TIMELINE */}
-          <section className="detail-section">
-
-            <div className="history-header">
-              <span className="history-label">
-                TRACKING LAPORAN
-              </span>
-
-              <h2>Riwayat Laporan</h2>
-
+              <span className="admin-eyebrow">ADMIN PORTAL</span>
+              <h1>Daftar Laporan</h1>
               <p>
-                Perjalanan laporan dari dibuat hingga
-                selesai.
+                Kelola laporan kerusakan fasilitas kampus.
               </p>
             </div>
 
-            {!report.updates ||
-            report.updates.length === 0 ? (
-              <div className="empty-history">
-                <div className="empty-history-icon">
-                  📋
-                </div>
+            <div className="admin-avatar">A</div>
+          </header>
 
-                <strong>
-                  Belum ada aktivitas
-                </strong>
+          {error && (
+            <div className="admin-reports-error">
+              {error}
+              <button onClick={fetchData}>Coba lagi</button>
+            </div>
+          )}
 
-                <p>
-                  Riwayat laporan akan muncul ketika
-                  ada perubahan status.
-                </p>
-              </div>
-            ) : (
-              <div className="history-timeline">
+          <section className="report-summary">
+            <div>
+              <span>Total Laporan</span>
+              <strong>{reports.length}</strong>
+            </div>
 
-                {report.updates.map(
-                  (update, index) => (
-                    <div
-                      className="history-item"
-                      key={update.id}
-                    >
-
-                      {/* TIMELINE DOT */}
-                      <div
-                        className={`history-dot ${
-                          index ===
-                          report.updates.length - 1
-                            ? "history-dot-active"
-                            : ""
-                        }`}
-                      ></div>
-
-                      {/* CONTENT */}
-                      <div className="history-content">
-
-                        <div className="history-top">
-
-                          <strong>
-                            {getHistoryTitle(update)}
-                          </strong>
-
-                          <span>
-                            {formatDate(
-                              update.createdAt
-                            )}
-                          </span>
-
-                        </div>
-
-                        <p className="history-description">
-                          {getHistoryDescription(
-                            update
-                          )}
-                        </p>
-
-                        <small>
-                          Oleh{" "}
-                          <strong>
-                            {update.user?.name ||
-                              "User"}
-                          </strong>
-
-                          {update.user?.role && (
-                            <>
-                              {" "}
-                              · {update.user.role}
-                            </>
-                          )}
-                        </small>
-
-                      </div>
-                    </div>
-                  )
-                )}
-
-              </div>
-            )}
-
+            <button
+              className="refresh-button"
+              onClick={fetchData}
+            >
+              ↻ Refresh Data
+            </button>
           </section>
 
+          {reports.length === 0 ? (
+            <section className="report-empty">
+              <div>📋</div>
+              <h3>Belum ada laporan</h3>
+              <p>
+                Belum ada laporan fasilitas dari mahasiswa.
+              </p>
+            </section>
+          ) : (
+            <section className="report-list">
+              {reports.map((report) => (
+                <article className="report-card" key={report.id}>
+                  <div className="report-card-header">
+                    <span className="report-number">
+                      LAPORAN #{report.id}
+                    </span>
+
+                    <span
+                      className={`report-status status-${report.status.toLowerCase()}`}
+                    >
+                      {getStatusLabel(report.status)}
+                    </span>
+                  </div>
+
+                  <h2 className="report-title">
+                    {report.title}
+                  </h2>
+
+                  <p className="report-description">
+                    {report.description}
+                  </p>
+
+                  <div className="report-info">
+                    <div>
+                      <small>Pelapor</small>
+                      <strong>
+                        {report.user?.name || "Mahasiswa"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <small>Fasilitas</small>
+                      <strong>
+                        {report.facility?.name || "-"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <small>Lokasi</small>
+                      <strong>
+                        {report.facility?.location || "-"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <small>Prioritas</small>
+                      <strong>
+                        {getPriorityLabel(report.priority)}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="report-form-group">
+                    <label htmlFor={`technician-${report.id}`}>
+                      Teknisi
+                    </label>
+
+                    <select
+                      id={`technician-${report.id}`}
+                      defaultValue=""
+                      disabled={assigningId === report.id}
+                      onChange={(e) =>
+                        handleAssignTechnician(
+                          report.id,
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="">
+                        -- Pilih Teknisi --
+                      </option>
+
+                      {technicians.map((technician) => (
+                        <option
+                          key={technician.id}
+                          value={technician.id}
+                        >
+                          {technician.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="report-form-group">
+                    <label htmlFor={`status-${report.id}`}>
+                      Update Status
+                    </label>
+
+                    <select
+                      id={`status-${report.id}`}
+                      value={report.status}
+                      onChange={(e) =>
+                        handleStatusChange(
+                          report.id,
+                          e.target.value
+                        )
+                      }
+                    >
+                      {statuses.map((status) => (
+                        <option key={status} value={status}>
+                          {getStatusLabel(status)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    className="report-detail-button"
+                    onClick={() =>
+                      navigate(`/admin/reports/${report.id}`)
+                    }
+                  >
+                    👁 Lihat Detail
+                  </button>
+                </article>
+              ))}
+            </section>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-export default ReportDetail;
+export default AdminReports;
